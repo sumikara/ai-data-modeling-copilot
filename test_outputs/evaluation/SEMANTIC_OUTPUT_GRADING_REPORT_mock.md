@@ -1,10 +1,21 @@
 # SEMANTIC OUTPUT GRADING REPORT (mock)
 
+## Run ID
+- `run_20260430T211825Z_a4d5e3a0`
+
 ## Mode
 - `mock`
 
+## Input Path
+- `test_inputs/semantic_profiling/transaction_like_profile.json`
+
 ## Retrieval Query
 - `grain decision fact vs dimension SCD rules transaction dataset profiling duplicates keys`
+
+## Retrieved Context Sources
+- `knowledge_base/extracted_notes/scd_decision_rules.md`
+- `knowledge_base/extracted_notes/grain_decision_rules.md`
+- `knowledge_base/extracted_notes/dimensional_modeling_principles.md`
 
 ## Retrieved Context (truncated)
 
