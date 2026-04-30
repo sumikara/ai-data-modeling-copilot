@@ -206,3 +206,15 @@ Every run must include these reasoning sections in `modeling_notes` (or a siblin
 
 This skill is designed for later agentic workflows (e.g., Domain Pattern Agent / Modeling Agent handoff).
 It should be invoked only after post-staging profiling artifacts are available.
+
+---
+
+## Test Fixture
+
+Use the following human-readable fixture files to validate expected reasoning behavior:
+
+- `test_inputs/semantic_profiling/transaction_like_profile.json`
+- `test_inputs/semantic_profiling/EXPECTED_SEMANTIC_OUTPUT.md`
+
+This fixture is a behavior contract for future Modeling Agent integration, not an automated test harness yet.
+
