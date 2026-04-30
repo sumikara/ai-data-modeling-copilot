@@ -122,11 +122,46 @@ def _call_gemini(prompt: str) -> str:
 
 
 def _extract_json_block(raw_text: str) -> Dict[str, Any]:
-    """Extract and parse first fenced ```json block from raw output."""
-    match = re.search(r"```json\s*(\{[\s\S]*?\})\s*```", raw_text)
-    if not match:
-        raise ValueError("No fenced ```json block found in LLM output")
-    return json.loads(match.group(1))
+    """Extract and parse JSON from LLM/Gemini output with robust fallbacks."""
+    text = (raw_text or "").strip().lstrip("﻿​‌‍")
+
+    # 1) Preferred: fenced ```json block
+    match = re.search(r"```json\s*(\{[\s\S]*?\})\s*```", text, flags=re.IGNORECASE)
+    if match:
+        return json.loads(match.group(1).strip())
+
+    # 2) Fallback: generic fenced ``` block that contains JSON
+    generic_match = re.search(r"```\s*(\{[\s\S]*?\})\s*```", text)
+    if generic_match:
+        return json.loads(generic_match.group(1).strip())
+
+    # 3) Fallback: first top-level JSON object in text
+    start = text.find("{")
+    if start != -1:
+        depth = 0
+        in_string = False
+        escape = False
+        for i in range(start, len(text)):
+            ch = text[i]
+            if in_string:
+                if escape:
+                    escape = False
+                elif ch == "\\":
+                    escape = True
+                elif ch == '"':
+                    in_string = False
+            else:
+                if ch == '"':
+                    in_string = True
+                elif ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        candidate = text[start : i + 1].strip()
+                        return json.loads(candidate)
+
+    raise ValueError("No parseable JSON object found in LLM output")
 
 
 def _mock_llm_call(_: str, table_profile: Dict[str, Any], relationships: Any, domain_findings: Dict[str, Any]) -> Dict[str, Any]:
