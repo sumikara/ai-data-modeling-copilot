@@ -1,0 +1,25 @@
+approved_sources:
+  - name: Kimball Dimensional Modeling
+    category: methodology
+    status: approved_reference
+    notes: Dimensional marts, conformed dimensions, bus matrix concepts.
+
+  - name: Inmon Corporate Information Factory
+    category: methodology
+    status: approved_reference
+    notes: Enterprise 3NF integration layer before dimensional publishing.
+
+  - name: ELT Architecture Principles
+    category: architecture
+    status: approved_reference
+    notes: Transform inside target database engine; keep logic auditable and rerunnable.
+
+  - name: SCD Design Patterns (Type 0/1/2)
+    category: dimensional_governance
+    status: approved_reference
+    notes: Entity-specific change behavior with explicit historical policy.
+
+  - name: Data Quality Dimensions Framework
+    category: governance
+    status: approved_reference
+    notes: Completeness, uniqueness, validity, consistency, accuracy, timeliness.
