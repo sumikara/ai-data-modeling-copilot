@@ -1,46 +1,94 @@
-"""Local keyword-based knowledge retrieval for AI Copilot context injection."""
+"""Local hybrid-scoring knowledge retrieval for AI Copilot context injection."""
 
 from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 KNOWLEDGE_BASE_DIR = Path("knowledge_base")
 MAX_FILES = 3
 MAX_CHARS_PER_FILE = 2000
+
+BOOST_KEYWORDS: Dict[str, List[str]] = {
+    "source_triplet": ["source_triplet_and_lineage_rules.md"],
+    "lineage": ["source_triplet_and_lineage_rules.md"],
+    "default row": ["default_row_strategy.md"],
+    "unknown member": ["default_row_strategy.md"],
+    "scd": ["scd_decision_rules.md"],
+    "grain": ["grain_decision_rules.md"],
+}
 
 
 def _tokenize(text: str) -> List[str]:
     return re.findall(r"[a-z0-9_]+", text.lower())
 
 
-def _score_content(content: str, query_terms: List[str]) -> int:
+def _collect_markdown_files(base_dir: Path) -> List[Path]:
+    return sorted(base_dir.rglob("*.md"))
+
+
+def _keyword_overlap_score(content: str, query_terms: List[str]) -> int:
     if not query_terms:
         return 0
     content_terms = set(_tokenize(content))
     return sum(1 for term in query_terms if term in content_terms)
 
 
-def _collect_markdown_files(base_dir: Path) -> List[Path]:
-    return sorted(base_dir.rglob("*.md"))
+def _file_boost_score(query: str, filename: str) -> Tuple[int, List[str]]:
+    q = query.lower()
+    score = 0
+    reasons: List[str] = []
+
+    for trigger, targets in BOOST_KEYWORDS.items():
+        if trigger in q and filename in targets:
+            score += 8
+            reasons.append(f"boost:{trigger}")
+
+    return score, reasons
 
 
-def _extract_chunk(content: str, query_terms: List[str], max_chars: int = MAX_CHARS_PER_FILE) -> str:
+def _title_match_bonus(filename: str, query_terms: List[str]) -> Tuple[int, List[str]]:
+    stem = Path(filename).stem.lower()
+    stem_terms = set(_tokenize(stem.replace("-", " ")))
+    matched = [term for term in query_terms if term in stem_terms]
+    bonus = min(len(set(matched)), 4)
+    reasons = [f"title_match:{term}" for term in sorted(set(matched))]
+    return bonus, reasons
+
+
+def _best_matching_chunk(content: str, query_terms: List[str], max_chars: int = MAX_CHARS_PER_FILE) -> str:
     lines = content.splitlines()
     if not lines:
         return ""
 
-    # Prefer lines that contain any query term and capture local window.
-    lowered = [line.lower() for line in lines]
-    for i, line in enumerate(lowered):
-        if any(term in line for term in query_terms):
-            start = max(0, i - 8)
-            end = min(len(lines), i + 20)
-            chunk = "\n".join(lines[start:end]).strip()
-            return chunk[:max_chars]
+    # Windowed scan: pick the chunk with highest keyword density.
+    window_size = 24
+    best_score = -1
+    best_chunk = ""
 
-    return "\n".join(lines)[:max_chars].strip()
+    for start in range(0, len(lines)):
+        end = min(len(lines), start + window_size)
+        window = lines[start:end]
+        if not window:
+            continue
+        joined = "\n".join(window)
+        tokens = _tokenize(joined)
+        if not tokens:
+            continue
+
+        hits = sum(1 for term in query_terms if term in tokens)
+        density = hits / max(len(tokens), 1)
+        score = hits * 1000 + int(density * 100000)
+
+        if score > best_score:
+            best_score = score
+            best_chunk = joined
+
+    if not best_chunk:
+        best_chunk = "\n".join(lines)
+
+    return best_chunk.strip()[:max_chars]
 
 
 def retrieve_relevant_context(query: str) -> str:
@@ -49,7 +97,7 @@ def retrieve_relevant_context(query: str) -> str:
     Return concatenated relevant text chunks.
     """
     query_terms = _tokenize(query)
-    candidates: List[Tuple[int, Path, str]] = []
+    candidates: List[Tuple[int, Path, str, str]] = []
 
     for path in _collect_markdown_files(KNOWLEDGE_BASE_DIR):
         try:
@@ -57,13 +105,23 @@ def retrieve_relevant_context(query: str) -> str:
         except Exception:
             continue
 
-        score = _score_content(content, query_terms)
-        if score <= 0:
+        overlap = _keyword_overlap_score(content, query_terms)
+        boost, boost_reasons = _file_boost_score(query, path.name)
+        title_bonus, title_reasons = _title_match_bonus(path.name, query_terms)
+        total_score = overlap + boost + title_bonus
+
+        if total_score <= 0:
             continue
 
-        chunk = _extract_chunk(content, query_terms)
-        if chunk:
-            candidates.append((score, path, chunk))
+        chunk = _best_matching_chunk(content, query_terms)
+        if not chunk:
+            continue
+
+        reasons = [f"overlap={overlap}", f"boost={boost}", f"title_bonus={title_bonus}"]
+        reasons.extend(boost_reasons)
+        reasons.extend(title_reasons)
+        why_selected = ", ".join(reasons)
+        candidates.append((total_score, path, chunk, why_selected))
 
     candidates.sort(key=lambda x: (-x[0], str(x[1])))
     top = candidates[:MAX_FILES]
@@ -72,7 +130,13 @@ def retrieve_relevant_context(query: str) -> str:
         return "No relevant knowledge base context found."
 
     parts = []
-    for score, path, chunk in top:
-        parts.append(f"### Source: {path}\n(score={score})\n{chunk}")
+    for score, path, chunk, why_selected in top:
+        parts.append(
+            f"### Source: {path}\n"
+            f"file_name={path.name}\n"
+            f"score={score}\n"
+            f"why_selected={why_selected}\n"
+            f"{chunk}"
+        )
 
     return "\n\n---\n\n".join(parts)

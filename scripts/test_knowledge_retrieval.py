@@ -21,17 +21,29 @@ def parse_sources(context: str) -> list[str]:
     return re.findall(r"^### Source: (.+)$", context, flags=re.MULTILINE)
 
 
+def parse_scores_and_reasons(context: str) -> list[tuple[str, str]]:
+    scores = re.findall(r"^score=(.+)$", context, flags=re.MULTILINE)
+    reasons = re.findall(r"^why_selected=(.+)$", context, flags=re.MULTILINE)
+    length = min(len(scores), len(reasons))
+    return list(zip(scores[:length], reasons[:length]))
+
+
 def main() -> None:
     for idx, query in enumerate(QUERIES, start=1):
         context = retrieve_relevant_context(query)
         sources = parse_sources(context)
+        scored = parse_scores_and_reasons(context)
 
         print("=" * 90)
         print(f"Query {idx}: {query}")
         print("Top retrieved sources:")
         if sources:
-            for s in sources:
+            for i, s in enumerate(sources):
                 print(f"- {s}")
+                if i < len(scored):
+                    score, why = scored[i]
+                    print(f"  score: {score}")
+                    print(f"  why_selected: {why}")
         else:
             print("- (none)")
 

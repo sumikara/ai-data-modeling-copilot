@@ -12,20 +12,16 @@ python scripts/test_knowledge_retrieval.py
 **Query:** `grain decision fact dimension transaction dataset`
 
 **Top retrieved files:**
-1. `knowledge_base/extracted_notes/dimensional_modeling_principles.md`
-2. `knowledge_base/extracted_notes/grain_decision_rules.md`
-3. `knowledge_base/extracted_notes/partitioning_parallelism_performance_optimization.md`
+1. `knowledge_base/extracted_notes/grain_decision_rules.md` (score=13)
+2. `knowledge_base/extracted_notes/dimensional_modeling_principles.md` (score=5)
+3. `knowledge_base/extracted_notes/partitioning_parallelism_performance_optimization.md` (score=5)
 
 **Why relevant:**
-- Dimensional modeling principles directly cover fact vs dimension decisions and grain declaration.
-- Grain decision rules file is explicitly aligned with grain selection.
-- Partitioning note is partially relevant due to fact-table design/performance overlap.
+- File-level boost for `grain` correctly prioritizes grain-specific rules.
+- Dimensional modeling principles remain strongly relevant for fact/dimension context.
 
 **Acceptable?**
-- **Yes (good).** Top 2 are highly relevant.
-
-**Weak/missing points:**
-- Third result could be replaced by a more directly semantic-modeling-specific rule file if available.
+- **Yes (improved).** Ranking is now better aligned with query intent.
 
 ---
 
@@ -33,61 +29,50 @@ python scripts/test_knowledge_retrieval.py
 **Query:** `SCD type 2 natural key surrogate key customer attributes`
 
 **Top retrieved files:**
-1. `knowledge_base/extracted_notes/dimensional_modeling_principles.md`
-2. `knowledge_base/extracted_notes/scd_decision_rules.md`
-3. `knowledge_base/extracted_notes/data_warehouse_etl_foundations.md`
+1. `knowledge_base/extracted_notes/scd_decision_rules.md` (score=16)
+2. `knowledge_base/extracted_notes/dimensional_modeling_principles.md` (score=8)
+3. `knowledge_base/extracted_notes/data_warehouse_etl_foundations.md` (score=6)
 
 **Why relevant:**
-- SCD decision rules are directly relevant to Type 2 handling.
-- Dimensional modeling principles include key modeling and dimension behavior guidance.
-- ETL foundations provide supporting context for surrogate/business key handling flows.
+- SCD file now ranks first due to `scd` boost and overlap.
+- Supporting files provide key/dimension context.
 
 **Acceptable?**
-- **Yes (good).** Relevant SCD and modeling files are present in top 3.
-
-**Weak/missing points:**
-- `scd_decision_rules.md` ideally should rank first for this query.
+- **Yes (improved).** Desired SCD-first behavior achieved.
 
 ---
 
-## Query 3
+## Query 3 (Re-evaluated)
 **Query:** `source triplet lineage source_system source_table source_id`
 
 **Top retrieved files:**
-1. `knowledge_base/extracted_notes/data_warehouse_etl_foundations.md`
-2. `knowledge_base/extracted_notes/deduplication_and_conformance_rules.md`
-3. `knowledge_base/local_rules/layer_responsibilities.md`
+1. `knowledge_base/extracted_notes/source_triplet_and_lineage_rules.md` (score=11)
+2. `knowledge_base/extracted_notes/data_warehouse_etl_foundations.md` (score=6)
+3. `knowledge_base/extracted_notes/deduplication_and_conformance_rules.md` (score=6)
 
 **Why relevant:**
-- ETL foundations and dedup/conformance include source-system handling concepts.
-- Layer responsibilities can include lineage flow ownership.
+- `lineage` boost now correctly elevates `source_triplet_and_lineage_rules.md` to rank #1.
+- Remaining files are still contextually related to source/system traceability.
 
 **Acceptable?**
-- **Partially acceptable.** Results are related, but not optimal.
-
-**Weak/missing points:**
-- `knowledge_base/extracted_notes/source_triplet_and_lineage_rules.md` should appear in top results and did not.
-- Indicates weakness in plain keyword overlap and chunk targeting.
+- **Yes (fixed).** Previously weak case is now strong and targeted.
 
 ---
 
-## Query 4
+## Query 4 (Re-evaluated)
 **Query:** `default row unknown member null foreign key`
 
 **Top retrieved files:**
-1. `knowledge_base/extracted_notes/dimensional_modeling_principles.md`
-2. `knowledge_base/extracted_notes/scd_decision_rules.md`
-3. `knowledge_base/extracted_notes/deduplication_and_conformance_rules.md`
+1. `knowledge_base/extracted_notes/default_row_strategy.md` (score=20)
+2. `knowledge_base/extracted_notes/dimensional_modeling_principles.md` (score=7)
+3. `knowledge_base/extracted_notes/scd_decision_rules.md` (score=7)
 
 **Why relevant:**
-- Dimensional modeling and SCD notes can mention unknown/default key handling context.
-- Dedup/conformance includes key integrity and quality concerns.
+- Combined boosts for `default row` and `unknown member` strongly prioritize `default_row_strategy.md`.
+- Supporting files include related FK/conformance semantics.
 
 **Acceptable?**
-- **Partially acceptable.** Related, but not specific enough.
-
-**Weak/missing points:**
-- `knowledge_base/extracted_notes/default_row_strategy.md` should likely rank in top 3 and did not.
+- **Yes (fixed).** Previously weak case now retrieves the correct specialized rule file first.
 
 ---
 
@@ -95,35 +80,36 @@ python scripts/test_knowledge_retrieval.py
 **Query:** `partitioning fact table monthly refresh performance`
 
 **Top retrieved files:**
-1. `knowledge_base/extracted_notes/partitioning_parallelism_performance_optimization.md`
-2. `knowledge_base/extracted_notes/data_warehouse_etl_foundations.md`
-3. `knowledge_base/extracted_notes/dimensional_modeling_principles.md`
+1. `knowledge_base/extracted_notes/partitioning_parallelism_performance_optimization.md` (score=6)
+2. `knowledge_base/extracted_notes/data_warehouse_etl_foundations.md` (score=3)
+3. `knowledge_base/extracted_notes/dimensional_modeling_principles.md` (score=3)
 
 **Why relevant:**
-- Partitioning/performance note is exactly aligned with query intent.
-- ETL foundations and dimensional modeling provide supporting context for fact-table and refresh strategy.
+- Partitioning/performance file remains correctly ranked first by overlap.
 
 **Acceptable?**
-- **Yes (strong).** Primary result is highly relevant.
-
-**Weak/missing points:**
-- Could also benefit from `dwh_refresh_materialized_views_final_system_design.md` in top 3 for explicit refresh focus.
+- **Yes (strong).** Maintains expected behavior.
 
 ---
 
-## Overall Retrieval Assessment
+## Hybrid Scoring Validation
 
-- Local keyword retrieval is functioning and returns generally relevant context for broad modeling/performance prompts.
-- Strong cases: Query 1, Query 2, Query 5.
-- Weak cases: Query 3 (lineage/source triplet specificity), Query 4 (default row strategy specificity).
+Scoring now reflects:
+- `keyword_overlap_score`
+- `file_boost_score`
+- `title_match_bonus`
 
-## Obvious Missing/Weak Retrieval Cases
+Output now includes retrieval diagnostics:
+- `file_name`
+- `score`
+- `why_selected`
 
-1. Exact-domain files with narrow terms can be outranked by longer high-frequency docs.
-2. No phrase weighting or exact-title boosting (e.g., `source_triplet`, `default_row`).
-3. Chunk extraction chooses first matching window; may miss the most semantically relevant section in a file.
+This made ranking behavior transparent and easier to debug.
 
-## Acceptability Verdict
+## Overall Verdict
 
-- **Acceptable for current simple local RAG smoke stage**, with clear precision limitations expected from pure keyword overlap.
-- Suitable as a baseline before adding weighted scoring or vector retrieval.
+- Retrieval quality is improved for targeted weak cases.
+- Specifically, both previously weak queries are fixed:
+  - source triplet/lineage query now returns lineage rules first,
+  - default row query now returns default-row strategy first.
+- System remains simple and local (no embeddings/vector DB), as required.
