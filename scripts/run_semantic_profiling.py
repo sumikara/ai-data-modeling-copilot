@@ -12,7 +12,7 @@ from src.agents.semantic_profiling_agent import run_semantic_profiling
 def main() -> None:
     fixture = "test_inputs/semantic_profiling/transaction_like_profile.json"
 
-    for mode in ("mock", "llm"):
+    for mode in ("mock", "llm", "gemini"):
         print(f"\n=== Running semantic profiling in mode={mode} ===")
         result = run_semantic_profiling(fixture, mode=mode)
         print(json.dumps(result, indent=2, ensure_ascii=False))

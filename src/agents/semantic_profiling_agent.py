@@ -17,6 +17,7 @@ from typing import Any, Dict, Tuple
 PROMPT_TEMPLATE_PATH = Path(".ai/prompts/semantic-profiling-prompt-template.md")
 OUTPUT_PATH = Path("test_outputs/semantic_profiling/ACTUAL_SEMANTIC_OUTPUT.md")
 RAW_OUTPUT_PATH = Path("test_outputs/semantic_profiling/ACTUAL_LLM_RAW_OUTPUT.md")
+GEMINI_RAW_OUTPUT_PATH = Path("test_outputs/semantic_profiling/ACTUAL_GEMINI_RAW_OUTPUT.md")
 
 
 def _load_profile_artifacts(profile_json_path: Path) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Any]:
@@ -76,7 +77,7 @@ def _build_prompt(table_profile: Dict[str, Any], relationships: Any, domain_find
 
 
 def _call_llm(prompt: str) -> str:
-    """Execute a real LLM call and return raw text output."""
+    """Execute a real OpenAI LLM call and return raw text output."""
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise RuntimeError("Missing OPENAI_API_KEY environment variable")
@@ -96,6 +97,28 @@ def _call_llm(prompt: str) -> str:
         temperature=0,
     )
     return response.choices[0].message.content or ""
+
+
+def _call_gemini(prompt: str) -> str:
+    """Execute a real Gemini call and return raw text output."""
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("Missing GEMINI_API_KEY environment variable")
+
+    try:
+        from google import genai
+    except Exception as exc:  # pragma: no cover - env dependent
+        raise RuntimeError("google-genai package is not installed") from exc
+
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[
+            "You are a strict data warehouse modeling reasoning engine.",
+            prompt,
+        ],
+    )
+    return response.text or ""
 
 
 def _extract_json_block(raw_text: str) -> Dict[str, Any]:
@@ -179,7 +202,7 @@ def run_semantic_profiling(profile_json_path: str, mode: str = "mock") -> Dict[s
     Args:
         profile_json_path: Path to combined profile JSON file or a directory
             containing the required JSON artifacts.
-        mode: "mock" (default) or "llm".
+        mode: "mock" (default), "llm", or "gemini".
 
     Returns:
         Parsed semantic profiling JSON object, or structured error object.
@@ -203,15 +226,38 @@ def run_semantic_profiling(profile_json_path: str, mode: str = "mock") -> Dict[s
             return parsed_json
         except Exception as exc:
             if not RAW_OUTPUT_PATH.exists():
-                RAW_OUTPUT_PATH.write_text(f"LLM execution failed before raw response could be captured.\nError: {exc}", encoding="utf-8")
+                RAW_OUTPUT_PATH.write_text(
+                    f"LLM execution failed before raw response could be captured.\nError: {exc}",
+                    encoding="utf-8",
+                )
             return {
                 "error": str(exc),
                 "raw_output_path": str(RAW_OUTPUT_PATH),
                 "requires_human_decision": True,
             }
 
+    if mode == "gemini":
+        GEMINI_RAW_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            raw_output = _call_gemini(prompt)
+            GEMINI_RAW_OUTPUT_PATH.write_text(raw_output, encoding="utf-8")
+            parsed_json = _extract_json_block(raw_output)
+            _write_output_markdown(parsed_json)
+            return parsed_json
+        except Exception as exc:
+            if not GEMINI_RAW_OUTPUT_PATH.exists():
+                GEMINI_RAW_OUTPUT_PATH.write_text(
+                    f"Gemini execution failed before raw response could be captured.\nError: {exc}",
+                    encoding="utf-8",
+                )
+            return {
+                "error": str(exc),
+                "raw_output_path": str(GEMINI_RAW_OUTPUT_PATH),
+                "requires_human_decision": True,
+            }
+
     return {
-        "error": f"Unsupported mode: {mode}. Use 'mock' or 'llm'.",
+        "error": f"Unsupported mode: {mode}. Use 'mock', 'llm', or 'gemini'.",
         "raw_output_path": str(RAW_OUTPUT_PATH),
         "requires_human_decision": True,
     }
