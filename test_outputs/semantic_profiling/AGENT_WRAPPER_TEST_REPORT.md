@@ -72,3 +72,10 @@ Updated JSON extraction to support robust fallbacks:
 
 - Real LLM/Gemini execution requires valid environment credentials and network access.
 - Parsing is robust, but end-to-end provider execution still depends on key availability.
+
+
+## 11. Knowledge-base context injection
+
+- Semantic profiling prompt construction now injects `KNOWLEDGE_BASE_CONTEXT` before reasoning instructions.
+- Context is retrieved from local `knowledge_base/` markdown files via keyword-overlap retrieval (`src/retrieval/knowledge_retriever.py`).
+- This means runtime flow is now: profiling artifacts -> retrieval query build -> retrieved KB context -> prompt assembly -> model call.
