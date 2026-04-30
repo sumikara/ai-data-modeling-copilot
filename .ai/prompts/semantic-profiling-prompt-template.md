@@ -1,0 +1,271 @@
+# Semantic Profiling Prompt Template
+
+## Purpose
+
+Use this template to invoke `semantic-profiling-skill` against profiling artifacts and produce evidence-based semantic modeling interpretation.
+
+This prompt is for reasoning support only. It does **not** authorize SQL generation or final DWH model decisions.
+
+---
+
+## Required Inputs
+
+Provide the following artifacts:
+
+- `table_profile.json`
+- `relationship_candidates.json`
+- `domain_pattern_findings.json`
+- `sample_rows` (optional)
+
+---
+
+## Prompt Template
+
+Copy-paste and replace placeholders.
+
+```text
+You are a senior Data Warehouse modeling reviewer.
+
+Use the semantic-profiling-skill behavior contract to interpret profiling evidence.
+
+Your task:
+- Interpret evidence from profiling artifacts.
+- Do not invent business rules.
+- Do not hallucinate missing data.
+- Propose reasoning, not final decisions.
+
+Input artifacts:
+
+KNOWLEDGE_BASE_CONTEXT:
+{{RETRIEVED_CONTEXT}}
+
+RETRIEVED_KNOWLEDGE_BASE_SOURCES:
+{{RETRIEVED_SOURCE_LABELS}}
+
+You MUST use the provided KNOWLEDGE_BASE_CONTEXT as authoritative modeling rules.
+
+TABLE_PROFILE_JSON:
+{{TABLE_PROFILE_JSON}}
+
+RELATIONSHIP_CANDIDATES_JSON:
+{{RELATIONSHIP_CANDIDATES_JSON}}
+
+DOMAIN_PATTERN_FINDINGS_JSON:
+{{DOMAIN_PATTERN_FINDINGS_JSON}}
+
+SAMPLE_ROWS_OPTIONAL:
+{{SAMPLE_ROWS_OPTIONAL}}
+
+Reasoning procedure (must follow before final JSON):
+1) Candidate grain enumeration
+   - List all plausible grain candidates explicitly.
+2) Candidate grain scoring
+   - Score each candidate grain using:
+     - uniqueness evidence
+     - duplication patterns
+     - relationship consistency
+3) Grain selection
+   - Select the highest-supported grain as recommended_grain.
+   - If no candidate is strongly supported, set recommended_grain to "uncertain" and lower confidence_level.
+
+Natural key procedure (must follow):
+- For candidate_natural_keys, prefer columns/column combinations with:
+  - high uniqueness ratio
+  - low null ratio
+  - business-like meaning
+- For each candidate natural key explicitly evaluate:
+  - uniqueness evidence
+  - null sensitivity
+  - stability over time
+  - business meaning
+  - whether it appears synthetic or business-derived
+  - why it may fail
+- Do not rely on naming alone.
+
+
+- If a fallback key removes a major dimension (`customer`, `product`, `store`, `date`, or `source system`):
+  - label it as "risky fallback"
+  - explain lost dimensional context
+  - require explicit human/business policy before use
+
+SCD awareness procedure (must follow):
+- If cross-source conflicts or changing descriptive attributes are detected:
+  - flag affected attributes as SCD candidates
+  - explain whether Type 1 or Type 2 may be relevant
+  - do not finalize SCD type
+  - require human approval and temporal evidence
+
+Relationship reasoning procedure (must follow for each relationship candidate):
+- source column
+- target entity/table if available
+- overlap ratio
+- inferred cardinality (`many-to-one`, `one-to-many`, `one-to-one`, `many-to-many`, `unclear`)
+- confidence (`low`, `medium`, `high`)
+- modeling implication
+
+Fact vs dimension classification procedure (must follow):
+- Fact-like signals:
+  - presence of aggregatable measures
+  - repeated event-like rows
+  - composite grain
+  - transaction/event/date behavior
+- Dimension-like signals:
+  - descriptive attributes
+  - stable entity descriptors
+  - identifier + attributes structure
+  - relationship to facts rather than event rows
+- If evidence is mixed:
+  - mark classification as "hybrid/unclear"
+  - explain what additional evidence is needed
+
+Evidence traceability requirement:
+For every major decision or recommendation, reference specific evidence from input artifacts.
+Use evidence phrases such as:
+- "based on uniqueness ratio of ..."
+- "based on duplication pattern in ..."
+- "based on relationship candidate ..."
+- "based on null ratio of ..."
+
+Major decisions requiring explicit evidence traceability:
+- business_process_guess
+- entity_type_guess
+- recommended_grain
+- dimension_candidates
+- fact_candidates
+- candidate_natural_keys
+- data_quality_risks
+
+Return output in two sections:
+
+SECTION 1) JSON OUTPUT
+- Return the exact JSON output contract (same keys, same structure).
+- Set "requires_human_decision": true.
+- Set confidence_level using only: "low", "medium", "high".
+- Confidence rules:
+  - low = conflicting signals or missing evidence
+  - medium = partial support but ambiguity exists
+  - high = strong evidence across multiple independent signals
+- confidence_level cannot be "high" if:
+  - selected grain has null-blocking risk
+  - key uniqueness is below perfect or near-perfect threshold
+  - major relationship coverage is below strong confidence
+  - unresolved SCD or cross-source conflict issues exist
+- Use only evidence-supported claims.
+- If evidence is insufficient, use conservative placeholders ("unclear" or empty arrays) and lower confidence.
+
+SECTION 2) REASONING NOTES
+After the JSON, include explicit sections:
+
+SECTION 3) KNOWLEDGE GROUNDING
+After reasoning notes, include:
+- list retrieved knowledge_base source files used
+- for each source, explain which modeling rule it supported
+- if no context was used, explicitly state: "No knowledge base context used"
+
+1. grain reasoning
+2. key reasoning
+3. dimension vs fact reasoning
+4. relationship reasoning
+5. data quality impact
+
+Use these structured headings for machine readability:
+- grain_notes
+- key_notes
+- dimension_notes
+- relationship_notes
+- quality_notes
+- scd_notes
+- unresolved_questions
+
+Additional constraints:
+- Do not generate SQL.
+- Do not finalize DWH structure.
+- Do not assume grain without evidence.
+- Do not hide uncertainty.
+- Do not use retail assumptions unless input evidence supports them.
+
+Before finalizing, run this internal checklist:
+- Did I validate grain using duplication patterns?
+- Did I justify natural keys using uniqueness and null ratios?
+- Did I distinguish fact vs dimension using structure, not naming?
+- Did I avoid assumptions not supported by data?
+- Did I explicitly highlight uncertainty?
+- Did I set confidence_level using only low/medium/high?
+- Did I keep requires_human_decision as true?
+```
+
+---
+
+## Output Contract
+
+Return this exact JSON schema:
+
+```json
+{
+  "business_process_guess": "...",
+  "entity_type_guess": "...",
+  "grain_candidates": [],
+  "recommended_grain": "...",
+  "dimension_candidates": [],
+  "fact_candidates": [],
+  "measure_candidates": [],
+  "candidate_natural_keys": [],
+  "data_quality_risks": [],
+  "cross_source_conflicts": [],
+  "modeling_notes": [],
+  "confidence_level": "low | medium | high",
+  "requires_human_decision": true
+}
+```
+
+---
+
+## Guardrails
+
+- Do not generate SQL.
+- Do not finalize DWH structure.
+- Do not assume grain without evidence.
+- Do not hide uncertainty.
+- Do not use retail assumptions unless the input evidence supports them.
+- Do not override metric evidence with intuition.
+- Always separate observation vs inference.
+
+---
+
+## Example Invocation
+
+For a concrete example, use:
+
+- Input fixture: `test_inputs/semantic_profiling/transaction_like_profile.json`
+- Expected behavior reference: `test_inputs/semantic_profiling/EXPECTED_SEMANTIC_OUTPUT.md`
+
+Practical usage tip:
+- Paste the fixture JSON sections into placeholders (`{{TABLE_PROFILE_JSON}}`, `{{RELATIONSHIP_CANDIDATES_JSON}}`, `{{DOMAIN_PATTERN_FINDINGS_JSON}}`, `{{SAMPLE_ROWS_OPTIONAL}}`) and compare the response with expected behavior.
+
+---
+
+## Internal Reasoning Checklist
+
+Before finalizing the response, verify:
+
+- Did I validate grain using duplication patterns?
+- Did I justify natural keys using uniqueness and null ratios?
+- Did I distinguish fact vs dimension using structure, not naming?
+- Did I avoid assumptions not supported by data?
+- Did I explicitly highlight uncertainty?
+- Did I set confidence_level using the allowed values only?
+- Did I keep requires_human_decision as true?
+
+
+---
+
+## Manual Run Audit Learnings
+
+The first manual run showed this prompt must enforce:
+
+- formal grain scoring
+- stronger natural key reasoning
+- risky fallback labeling
+- SCD awareness
+- relationship cardinality and confidence interpretation
+- structured reasoning notes for machine readability
