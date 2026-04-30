@@ -65,10 +65,35 @@ Natural key procedure (must follow):
   - high uniqueness ratio
   - low null ratio
   - business-like meaning
+- For each candidate natural key explicitly evaluate:
+  - uniqueness evidence
+  - null sensitivity
+  - stability over time
+  - business meaning
+  - whether it appears synthetic or business-derived
+  - why it may fail
 - Do not rely on naming alone.
-- Explicitly explain:
-  - why each candidate is considered
-  - why it may fail as a stable key
+
+
+- If a fallback key removes a major dimension (`customer`, `product`, `store`, `date`, or `source system`):
+  - label it as "risky fallback"
+  - explain lost dimensional context
+  - require explicit human/business policy before use
+
+SCD awareness procedure (must follow):
+- If cross-source conflicts or changing descriptive attributes are detected:
+  - flag affected attributes as SCD candidates
+  - explain whether Type 1 or Type 2 may be relevant
+  - do not finalize SCD type
+  - require human approval and temporal evidence
+
+Relationship reasoning procedure (must follow for each relationship candidate):
+- source column
+- target entity/table if available
+- overlap ratio
+- inferred cardinality (`many-to-one`, `one-to-many`, `one-to-one`, `many-to-many`, `unclear`)
+- confidence (`low`, `medium`, `high`)
+- modeling implication
 
 Fact vs dimension classification procedure (must follow):
 - Fact-like signals:
@@ -112,6 +137,11 @@ SECTION 1) JSON OUTPUT
   - low = conflicting signals or missing evidence
   - medium = partial support but ambiguity exists
   - high = strong evidence across multiple independent signals
+- confidence_level cannot be "high" if:
+  - selected grain has null-blocking risk
+  - key uniqueness is below perfect or near-perfect threshold
+  - major relationship coverage is below strong confidence
+  - unresolved SCD or cross-source conflict issues exist
 - Use only evidence-supported claims.
 - If evidence is insufficient, use conservative placeholders ("unclear" or empty arrays) and lower confidence.
 
@@ -122,6 +152,15 @@ After the JSON, include explicit sections:
 3. dimension vs fact reasoning
 4. relationship reasoning
 5. data quality impact
+
+Use these structured headings for machine readability:
+- grain_notes
+- key_notes
+- dimension_notes
+- relationship_notes
+- quality_notes
+- scd_notes
+- unresolved_questions
 
 Additional constraints:
 - Do not generate SQL.
@@ -201,3 +240,17 @@ Before finalizing the response, verify:
 - Did I explicitly highlight uncertainty?
 - Did I set confidence_level using the allowed values only?
 - Did I keep requires_human_decision as true?
+
+
+---
+
+## Manual Run Audit Learnings
+
+The first manual run showed this prompt must enforce:
+
+- formal grain scoring
+- stronger natural key reasoning
+- risky fallback labeling
+- SCD awareness
+- relationship cardinality and confidence interpretation
+- structured reasoning notes for machine readability

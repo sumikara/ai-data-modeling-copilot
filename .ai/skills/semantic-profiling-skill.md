@@ -59,6 +59,15 @@ Return this exact structured shape:
 
 ### Output field guidance
 
+`confidence_level` must be one of: `low`, `medium`, `high`.
+
+`confidence_level` cannot be `high` if any of the following are true:
+- selected grain has null-blocking risk
+- key uniqueness is below perfect or near-perfect threshold
+- major relationship coverage is below strong confidence
+- unresolved SCD or cross-source conflict issues exist
+
+
 - `business_process_guess`: short hypothesis (e.g., “sales transaction capture”).
 - `entity_type_guess`: table tendency (e.g., event/fact-like, master/dimension-like, bridge-like, unclear).
 - `grain_candidates`: list of candidate grains with evidence references.
@@ -80,12 +89,35 @@ Return this exact structured shape:
 The skill must:
 
 1. Use profiling metrics as primary evidence.
-2. Reference uniqueness, duplication, cardinality, and relationship evidence explicitly.
-3. Infer grain from observed duplication/event patterns.
-4. Distinguish fact-like vs dimension-like behavior based on volatility, cardinality, and key patterns.
-5. Detect potential slowly changing attributes (e.g., same business key with changing descriptors over time/source).
-6. Highlight ambiguity instead of forced guessing.
-7. State uncertainty explicitly when evidence is insufficient or conflicting.
+2. List all grain candidates explicitly and score each candidate qualitatively as `high`, `medium`, or `low`.
+3. Grain scoring must consider:
+   - uniqueness ratio
+   - duplicate pattern
+   - null blocking
+   - relationship consistency
+   - whether grain preserves important dimensional context
+4. Select the highest-supported grain based on the scoring evidence, not narrative preference.
+5. If no grain is clearly supported, set `recommended_grain` to `"uncertain"` and set `confidence_level` to `low` or `medium`.
+6. For every candidate natural key, explicitly evaluate:
+   - uniqueness evidence
+   - null sensitivity
+   - stability over time
+   - business meaning
+   - whether key appears synthetic or business-derived
+   - why key may fail
+7. Candidate natural keys must never be accepted based on naming alone.
+8. If a fallback key removes a major dimension (`customer`, `product`, `store`, `date`, or `source system`), label it as `risky fallback`, explain dimensional context loss, and require explicit human/business policy before use.
+9. Detect SCD-relevant signals when cross-source conflicts or changing descriptors exist; flag impacted attributes as SCD candidates and discuss whether Type 1 or Type 2 may be relevant, without finalizing SCD type.
+10. For each relationship candidate include:
+   - source column
+   - target table/entity (if available)
+   - overlap ratio
+   - inferred cardinality (`many-to-one`, `one-to-many`, `one-to-one`, `many-to-many`, or `unclear`)
+   - confidence (`low`, `medium`, `high`)
+   - modeling implication
+11. Distinguish fact-like vs dimension-like behavior based on structure and evidence, not naming conventions.
+12. Highlight ambiguity instead of forced guessing.
+13. State uncertainty explicitly when evidence is insufficient or conflicting.
 
 ---
 
@@ -105,7 +137,7 @@ If an output cannot be supported:
 
 ## Mandatory reasoning sections
 
-Every run must include these reasoning sections in `modeling_notes` (or a sibling explanation block if your runtime wrapper supports it):
+Every run must include these reasoning sections in `modeling_notes` (or a sibling explanation block if your runtime wrapper supports it). Use the following structured headings for machine readability: `grain_notes`, `key_notes`, `dimension_notes`, `relationship_notes`, `quality_notes`, `scd_notes`, `unresolved_questions`.
 
 1. **grain reasoning**
    - Why each grain candidate is plausible/improbable.
@@ -218,3 +250,17 @@ Use the following human-readable fixture files to validate expected reasoning be
 
 This fixture is a behavior contract for future Modeling Agent integration, not an automated test harness yet.
 
+
+
+---
+
+## Manual Run Audit Learnings
+
+Based on the first manual run, this skill must enforce stronger reasoning discipline:
+
+- formal grain scoring
+- stronger natural key reasoning
+- risky fallback labeling
+- SCD awareness
+- relationship cardinality + confidence interpretation
+- structured reasoning notes for machine readability
