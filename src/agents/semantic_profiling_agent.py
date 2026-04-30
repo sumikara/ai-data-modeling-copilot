@@ -14,6 +14,8 @@ import time
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
+from src.retrieval.knowledge_retriever import retrieve_relevant_context
+
 
 PROMPT_TEMPLATE_PATH = Path(".ai/prompts/semantic-profiling-prompt-template.md")
 OUTPUT_PATH = Path("test_outputs/semantic_profiling/ACTUAL_SEMANTIC_OUTPUT.md")
@@ -65,14 +67,50 @@ def _load_profile_artifacts(profile_json_path: Path) -> Tuple[Dict[str, Any], Di
     raise FileNotFoundError(f"Profile artifact path not found: {profile_json_path}")
 
 
+
+
+def _build_retrieval_query(table_profile: Dict[str, Any], relationships: Any, domain_findings: Dict[str, Any]) -> str:
+    """Build a compact retrieval query from profiling evidence."""
+    table_name = str(table_profile.get("table_name", ""))
+    columns = table_profile.get("columns", [])
+    if isinstance(columns, dict):
+        columns_iter = [{"column_name": k} for k in columns.keys()]
+    elif isinstance(columns, list):
+        columns_iter = columns
+    else:
+        columns_iter = []
+
+    col_names = []
+    for col in columns_iter[:20]:
+        if isinstance(col, dict) and col.get("column_name"):
+            col_names.append(str(col["column_name"]))
+
+    hints = []
+    if isinstance(table_profile.get("row_count"), int):
+        hints.append("large dataset" if table_profile.get("row_count", 0) > 100000 else "small dataset")
+
+    if relationships:
+        hints.append("relationship candidates")
+
+    if domain_findings.get("cross_source_entity_conflicts"):
+        hints.append("cross source conflicts")
+
+    signal_terms = " ".join([table_name] + col_names[:10] + hints)
+    base = "grain decision fact vs dimension SCD rules transaction dataset profiling duplicates keys"
+    return f"{base} {signal_terms}".strip()
+
+
 def _build_prompt(table_profile: Dict[str, Any], relationships: Any, domain_findings: Dict[str, Any], sample_rows: Any) -> str:
-    """Inject profile artifacts into the prompt template placeholders."""
+    """Inject profile artifacts and retrieved KB context into prompt template."""
     template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
+    retrieval_query = _build_retrieval_query(table_profile, relationships, domain_findings)
+    retrieved_context = retrieve_relevant_context(retrieval_query)
     prompt = (
         template.replace("{{TABLE_PROFILE_JSON}}", json.dumps(table_profile, indent=2, ensure_ascii=False))
         .replace("{{RELATIONSHIP_CANDIDATES_JSON}}", json.dumps(relationships, indent=2, ensure_ascii=False))
         .replace("{{DOMAIN_PATTERN_FINDINGS_JSON}}", json.dumps(domain_findings, indent=2, ensure_ascii=False))
         .replace("{{SAMPLE_ROWS_OPTIONAL}}", json.dumps(sample_rows, indent=2, ensure_ascii=False))
+        .replace("{{RETRIEVED_CONTEXT}}", retrieved_context)
     )
     return prompt
 

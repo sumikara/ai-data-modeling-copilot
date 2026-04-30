@@ -36,6 +36,11 @@ Your task:
 
 Input artifacts:
 
+KNOWLEDGE_BASE_CONTEXT:
+{{RETRIEVED_CONTEXT}}
+
+You MUST use the provided KNOWLEDGE_BASE_CONTEXT as authoritative modeling rules.
+
 TABLE_PROFILE_JSON:
 {{TABLE_PROFILE_JSON}}
 
