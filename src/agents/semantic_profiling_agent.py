@@ -1,19 +1,22 @@
 """Semantic profiling agent wrapper.
 
-This module provides the first callable wrapper around the semantic profiling
-skill/prompt contract. It intentionally uses a mock LLM step for now so the
-execution path can be tested before API/MCP integrations are added.
+This module provides a callable wrapper around the semantic profiling
+skill/prompt contract. It supports mock execution and optional real LLM
+execution (when API key and client are available).
 """
 
 from __future__ import annotations
 
 import json
+import os
+import re
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
 
 PROMPT_TEMPLATE_PATH = Path(".ai/prompts/semantic-profiling-prompt-template.md")
 OUTPUT_PATH = Path("test_outputs/semantic_profiling/ACTUAL_SEMANTIC_OUTPUT.md")
+RAW_OUTPUT_PATH = Path("test_outputs/semantic_profiling/ACTUAL_LLM_RAW_OUTPUT.md")
 
 
 def _load_profile_artifacts(profile_json_path: Path) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Any]:
@@ -70,6 +73,37 @@ def _build_prompt(table_profile: Dict[str, Any], relationships: Any, domain_find
         .replace("{{SAMPLE_ROWS_OPTIONAL}}", json.dumps(sample_rows, indent=2, ensure_ascii=False))
     )
     return prompt
+
+
+def _call_llm(prompt: str) -> str:
+    """Execute a real LLM call and return raw text output."""
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("Missing OPENAI_API_KEY environment variable")
+
+    try:
+        from openai import OpenAI
+    except Exception as exc:  # pragma: no cover - env dependent
+        raise RuntimeError("openai package is not installed") from exc
+
+    client = OpenAI(api_key=api_key)
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a strict data warehouse modeling reasoning engine."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0,
+    )
+    return response.choices[0].message.content or ""
+
+
+def _extract_json_block(raw_text: str) -> Dict[str, Any]:
+    """Extract and parse first fenced ```json block from raw output."""
+    match = re.search(r"```json\s*(\{[\s\S]*?\})\s*```", raw_text)
+    if not match:
+        raise ValueError("No fenced ```json block found in LLM output")
+    return json.loads(match.group(1))
 
 
 def _mock_llm_call(_: str, table_profile: Dict[str, Any], relationships: Any, domain_findings: Dict[str, Any]) -> Dict[str, Any]:
@@ -139,22 +173,45 @@ def _write_output_markdown(output_json: Dict[str, Any]) -> None:
     OUTPUT_PATH.write_text(markdown, encoding="utf-8")
 
 
-def run_semantic_profiling(profile_json_path: str) -> Dict[str, Any]:
+def run_semantic_profiling(profile_json_path: str, mode: str = "mock") -> Dict[str, Any]:
     """Run semantic profiling wrapper and return parsed JSON output.
 
     Args:
         profile_json_path: Path to combined profile JSON file or a directory
             containing the required JSON artifacts.
+        mode: "mock" (default) or "llm".
 
     Returns:
-        Parsed semantic profiling JSON object.
+        Parsed semantic profiling JSON object, or structured error object.
     """
     path = Path(profile_json_path)
     table_profile, relationships, domain_findings, sample_rows = _load_profile_artifacts(path)
     prompt = _build_prompt(table_profile, relationships, domain_findings, sample_rows)
 
-    # Placeholder for future MCP/LLM integration.
-    output_json = _mock_llm_call(prompt, table_profile, relationships, domain_findings)
+    if mode == "mock":
+        output_json = _mock_llm_call(prompt, table_profile, relationships, domain_findings)
+        _write_output_markdown(output_json)
+        return output_json
 
-    _write_output_markdown(output_json)
-    return output_json
+    if mode == "llm":
+        RAW_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            raw_output = _call_llm(prompt)
+            RAW_OUTPUT_PATH.write_text(raw_output, encoding="utf-8")
+            parsed_json = _extract_json_block(raw_output)
+            _write_output_markdown(parsed_json)
+            return parsed_json
+        except Exception as exc:
+            if not RAW_OUTPUT_PATH.exists():
+                RAW_OUTPUT_PATH.write_text(f"LLM execution failed before raw response could be captured.\nError: {exc}", encoding="utf-8")
+            return {
+                "error": str(exc),
+                "raw_output_path": str(RAW_OUTPUT_PATH),
+                "requires_human_decision": True,
+            }
+
+    return {
+        "error": f"Unsupported mode: {mode}. Use 'mock' or 'llm'.",
+        "raw_output_path": str(RAW_OUTPUT_PATH),
+        "requires_human_decision": True,
+    }
