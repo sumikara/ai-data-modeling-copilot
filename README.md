@@ -17,3 +17,8 @@ python -m src.profiling.profile_runner
   - `outputs/profiles/{table_name}_profile.json`
 - One combined summary:
   - `outputs/profiles/profile_summary.md`
+
+### Running Semantic Profiling
+- `mock` mode works without an API key.
+- `llm` mode requires `OPENAI_API_KEY`.
+- See setup and safety guidance: [`docs/api-key-setup.md`](docs/api-key-setup.md).
