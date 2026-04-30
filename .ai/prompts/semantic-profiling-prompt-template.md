@@ -39,6 +39,9 @@ Input artifacts:
 KNOWLEDGE_BASE_CONTEXT:
 {{RETRIEVED_CONTEXT}}
 
+RETRIEVED_KNOWLEDGE_BASE_SOURCES:
+{{RETRIEVED_SOURCE_LABELS}}
+
 You MUST use the provided KNOWLEDGE_BASE_CONTEXT as authoritative modeling rules.
 
 TABLE_PROFILE_JSON:
@@ -152,6 +155,13 @@ SECTION 1) JSON OUTPUT
 
 SECTION 2) REASONING NOTES
 After the JSON, include explicit sections:
+
+SECTION 3) KNOWLEDGE GROUNDING
+After reasoning notes, include:
+- list retrieved knowledge_base source files used
+- for each source, explain which modeling rule it supported
+- if no context was used, explicitly state: "No knowledge base context used"
+
 1. grain reasoning
 2. key reasoning
 3. dimension vs fact reasoning

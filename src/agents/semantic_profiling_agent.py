@@ -100,17 +100,27 @@ def _build_retrieval_query(table_profile: Dict[str, Any], relationships: Any, do
     return f"{base} {signal_terms}".strip()
 
 
+
+
+def _extract_retrieved_sources(retrieved_context: str) -> list[str]:
+    """Extract source labels from retrieved context blocks."""
+    return re.findall(r"^### Source: (.+)$", retrieved_context or "", flags=re.MULTILINE)
+
+
 def _build_prompt(table_profile: Dict[str, Any], relationships: Any, domain_findings: Dict[str, Any], sample_rows: Any) -> str:
     """Inject profile artifacts and retrieved KB context into prompt template."""
     template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
     retrieval_query = _build_retrieval_query(table_profile, relationships, domain_findings)
     retrieved_context = retrieve_relevant_context(retrieval_query)
+    retrieved_sources = _extract_retrieved_sources(retrieved_context)
+    sources_block = "\n".join(f"- {src}" for src in retrieved_sources) if retrieved_sources else "No knowledge base context used"
     prompt = (
         template.replace("{{TABLE_PROFILE_JSON}}", json.dumps(table_profile, indent=2, ensure_ascii=False))
         .replace("{{RELATIONSHIP_CANDIDATES_JSON}}", json.dumps(relationships, indent=2, ensure_ascii=False))
         .replace("{{DOMAIN_PATTERN_FINDINGS_JSON}}", json.dumps(domain_findings, indent=2, ensure_ascii=False))
         .replace("{{SAMPLE_ROWS_OPTIONAL}}", json.dumps(sample_rows, indent=2, ensure_ascii=False))
         .replace("{{RETRIEVED_CONTEXT}}", retrieved_context)
+        .replace("{{RETRIEVED_SOURCE_LABELS}}", sources_block)
     )
     return prompt
 

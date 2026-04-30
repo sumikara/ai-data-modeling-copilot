@@ -104,6 +104,30 @@ def grade_semantic_output(output: dict, retrieved_context: str = "") -> dict:
             contradiction_notes = "Output contradicts context emphasis on human decision requirement."
     add_check("no_obvious_context_contradiction", not contradiction, contradiction_notes)
 
+    # 9b. knowledge grounding evidence when retrieved context is provided (warning-only)
+    if retrieved_context:
+        source_labels = re.findall(r"^### Source: (.+)$", retrieved_context, flags=re.MULTILINE)
+        notes_lower = notes_text.lower()
+        has_section = "knowledge grounding" in notes_lower or "knowledge_grounding" in notes_lower
+        source_hits = 0
+        for src in source_labels:
+            stem = src.split("/")[-1].replace(".md", "").replace("_", " ").lower()
+            key_terms = [t for t in stem.split() if len(t) > 3]
+            if any(t in notes_lower for t in key_terms):
+                source_hits += 1
+        grounded = has_section or source_hits > 0
+        add_check(
+            "knowledge_grounding_evidence",
+            grounded,
+            "Knowledge grounding detected in modeling notes." if grounded else "No explicit knowledge grounding references found.",
+            score_pass=100,
+            score_fail=60,
+        )
+        if not grounded:
+            recommendations.append(
+                "Add SECTION 3 knowledge grounding or reference retrieved KB rules in modeling_notes."
+            )
+
     # 10. output must not contain final SQL or DDL
     sql_found = _contains_sql_or_ddl(str(output))
     add_check("no_final_sql_or_ddl", not sql_found, "No SQL/DDL patterns found." if not sql_found else "Found SQL/DDL-like text in output.")

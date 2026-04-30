@@ -1,7 +1,7 @@
 # SEMANTIC OUTPUT GRADING REPORT (mock)
 
 ## Run ID
-- `run_20260430T211825Z_a4d5e3a0`
+- `run_20260430T213257Z_d0839dd0`
 
 ## Mode
 - `mock`
@@ -147,6 +147,12 @@ Examples:
       "score": 100,
       "passed": true,
       "notes": "No obvious contradiction detected."
+    },
+    {
+      "name": "knowledge_grounding_evidence",
+      "score": 100,
+      "passed": true,
+      "notes": "Knowledge grounding detected in modeling notes."
     },
     {
       "name": "no_final_sql_or_ddl",
