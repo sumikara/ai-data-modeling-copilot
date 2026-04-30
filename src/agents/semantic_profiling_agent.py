@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
@@ -99,8 +100,14 @@ def _call_llm(prompt: str) -> str:
     return response.choices[0].message.content or ""
 
 
+def _is_retryable_gemini_error(exc: Exception) -> bool:
+    """Return True only for retryable high-demand/unavailable Gemini failures."""
+    text = str(exc).lower()
+    return ("503" in text) or ("unavailable" in text) or ("high demand" in text)
+
+
 def _call_gemini(prompt: str) -> str:
-    """Execute a real Gemini call and return raw text output."""
+    """Execute a Gemini call with model fallback and targeted retries."""
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise RuntimeError("Missing GEMINI_API_KEY environment variable")
@@ -111,14 +118,31 @@ def _call_gemini(prompt: str) -> str:
         raise RuntimeError("google-genai package is not installed") from exc
 
     client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=[
-            "You are a strict data warehouse modeling reasoning engine.",
-            prompt,
-        ],
-    )
-    return response.text or ""
+    models = ["gemini-2.5-flash", "gemini-1.5-flash"]
+    waits = [5, 10, 20]
+    last_error: Exception | None = None
+
+    for model in models:
+        for attempt in range(1, len(waits) + 2):  # total attempts: 4 (initial + 3 retries)
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=[
+                        "You are a strict data warehouse modeling reasoning engine.",
+                        prompt,
+                    ],
+                )
+                return response.text or ""
+            except Exception as exc:  # pragma: no cover - provider dependent
+                last_error = exc
+                if attempt <= len(waits) and _is_retryable_gemini_error(exc):
+                    time.sleep(waits[attempt - 1])
+                    continue
+                break
+
+    if last_error:
+        raise RuntimeError(str(last_error)) from last_error
+    raise RuntimeError("Gemini call failed with unknown error")
 
 
 def _extract_json_block(raw_text: str) -> Dict[str, Any]:
