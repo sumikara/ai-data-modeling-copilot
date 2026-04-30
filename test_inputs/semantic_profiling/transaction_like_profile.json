@@ -1,0 +1,233 @@
+{
+  "table_profile": {
+    "table_name": "txn_sales_line",
+    "row_count": 12000,
+    "column_count": 14,
+    "columns": {
+      "transaction_id": {
+        "dtype": "object",
+        "null_ratio": 0.0,
+        "distinct_count": 4800,
+        "unique_ratio": 0.4,
+        "duplicate_value_count": 7200,
+        "top_values": [
+          {"value": "TXN-10421", "count": 9},
+          {"value": "TXN-10207", "count": 8}
+        ]
+      },
+      "transaction_dt": {
+        "dtype": "object",
+        "null_ratio": 0.002,
+        "distinct_count": 364,
+        "unique_ratio": 0.03,
+        "date_parse_success_ratio": 0.992
+      },
+      "product_id": {
+        "dtype": "object",
+        "null_ratio": 0.0,
+        "distinct_count": 920,
+        "unique_ratio": 0.077,
+        "duplicate_value_count": 11080
+      },
+      "customer_id": {
+        "dtype": "object",
+        "null_ratio": 0.012,
+        "distinct_count": 3400,
+        "unique_ratio": 0.283,
+        "duplicate_value_count": 8600
+      },
+      "store_id": {
+        "dtype": "object",
+        "null_ratio": 0.001,
+        "distinct_count": 45,
+        "unique_ratio": 0.0038,
+        "duplicate_value_count": 11955
+      },
+      "product_desc": {
+        "dtype": "object",
+        "null_ratio": 0.0,
+        "distinct_count": 960,
+        "unique_ratio": 0.08
+      },
+      "customer_segment": {
+        "dtype": "object",
+        "null_ratio": 0.05,
+        "distinct_count": 7,
+        "unique_ratio": 0.00058
+      },
+      "quantity": {
+        "dtype": "object",
+        "null_ratio": 0.004,
+        "numeric_parse_success_ratio": 0.996,
+        "min_value": "1",
+        "max_value": "48"
+      },
+      "unit_price": {
+        "dtype": "object",
+        "null_ratio": 0.003,
+        "numeric_parse_success_ratio": 0.994,
+        "min_value": "0.49",
+        "max_value": "899.99"
+      },
+      "total_sales": {
+        "dtype": "object",
+        "null_ratio": 0.006,
+        "numeric_parse_success_ratio": 0.991,
+        "min_value": "0.49",
+        "max_value": "10234.55"
+      },
+      "currency_cd": {
+        "dtype": "object",
+        "null_ratio": 0.0,
+        "distinct_count": 2,
+        "top_values": [
+          {"value": "USD", "count": 11850},
+          {"value": "EUR", "count": 150}
+        ]
+      },
+      "src_system": {
+        "dtype": "object",
+        "null_ratio": 0.0,
+        "distinct_count": 2,
+        "top_values": [
+          {"value": "POS", "count": 8600},
+          {"value": "WEB", "count": 3400}
+        ]
+      },
+      "load_dts": {
+        "dtype": "datetime64[ns]",
+        "null_ratio": 0.0,
+        "distinct_count": 24,
+        "date_parse_success_ratio": 1.0
+      },
+      "batch_id": {
+        "dtype": "int64",
+        "null_ratio": 0.0,
+        "distinct_count": 3
+      }
+    },
+    "candidate_primary_keys": [],
+    "candidate_composite_keys": [
+      {
+        "columns": ["transaction_id", "product_id", "customer_id", "transaction_dt"],
+        "uniqueness_ratio": 0.9992,
+        "null_blocking_columns": ["customer_id", "transaction_dt"],
+        "null_blocking_ratio": 0.014
+      },
+      {
+        "columns": ["transaction_id", "product_id", "transaction_dt"],
+        "uniqueness_ratio": 0.971
+      }
+    ],
+    "possible_natural_keys": [
+      {
+        "columns": ["transaction_id", "product_id", "transaction_dt"],
+        "reason": "high uniqueness but occasional duplicates"
+      }
+    ],
+    "profiling_notes": [
+      "transaction_id alone is not grain-safe due to multi-line baskets",
+      "small share of missing customer_id likely from guest checkout",
+      "numeric parse errors concentrated in unit_price for values with comma decimal separator"
+    ]
+  },
+  "relationship_candidates": [
+    {
+      "from_table": "txn_sales_line",
+      "from_column": "product_id",
+      "to_table": "dim_product",
+      "to_column": "product_id",
+      "overlap_ratio": 0.982,
+      "cardinality_guess": "many_to_one",
+      "confidence": "high"
+    },
+    {
+      "from_table": "txn_sales_line",
+      "from_column": "customer_id",
+      "to_table": "dim_customer",
+      "to_column": "customer_id",
+      "overlap_ratio": 0.944,
+      "cardinality_guess": "many_to_one",
+      "confidence": "medium"
+    },
+    {
+      "from_table": "txn_sales_line",
+      "from_column": "store_id",
+      "to_table": "dim_store",
+      "to_column": "store_id",
+      "overlap_ratio": 0.978,
+      "cardinality_guess": "many_to_one",
+      "confidence": "high"
+    },
+    {
+      "from_table": "txn_sales_line",
+      "from_column": "transaction_dt",
+      "to_table": "dim_date",
+      "to_column": "calendar_dt",
+      "overlap_ratio": 0.991,
+      "cardinality_guess": "many_to_one",
+      "confidence": "high"
+    }
+  ],
+  "domain_pattern_findings": {
+    "critical_identifier_completeness": [
+      {
+        "column": "customer_id",
+        "null_ratio": 0.012,
+        "impact": "customer conformance risk"
+      }
+    ],
+    "repeated_transaction_event_grain": {
+      "transaction_id_duplicate_ratio": 0.6,
+      "line_level_signature": ["transaction_id", "product_id", "customer_id", "transaction_dt"],
+      "line_level_uniqueness_ratio": 0.9992,
+      "finding": "line grain strongly indicated with minor null blocking"
+    },
+    "cross_source_entity_conflicts": [
+      {
+        "entity_key": "customer_id",
+        "source_pair": ["POS", "WEB"],
+        "conflict_columns": ["customer_segment"],
+        "conflict_rate": 0.037
+      }
+    ],
+    "descriptor_identity_checks": [
+      {
+        "entity": "product",
+        "descriptor_column": "product_desc",
+        "duplicate_descriptor_rate": 0.028,
+        "finding": "possible synonym/alias descriptors"
+      }
+    ],
+    "cast_readiness": {
+      "quantity_numeric_parse_success_ratio": 0.996,
+      "unit_price_numeric_parse_success_ratio": 0.994,
+      "total_sales_numeric_parse_success_ratio": 0.991,
+      "transaction_dt_date_parse_success_ratio": 0.992
+    }
+  },
+  "sample_rows": [
+    {
+      "transaction_id": "TXN-10421",
+      "transaction_dt": "2026-01-14",
+      "product_id": "P-1008",
+      "customer_id": "C-8891",
+      "store_id": "S-003",
+      "quantity": "2",
+      "unit_price": "9.99",
+      "total_sales": "19.98",
+      "src_system": "POS"
+    },
+    {
+      "transaction_id": "TXN-10421",
+      "transaction_dt": "2026-01-14",
+      "product_id": "P-1021",
+      "customer_id": "C-8891",
+      "store_id": "S-003",
+      "quantity": "1",
+      "unit_price": "14,99",
+      "total_sales": "14.99",
+      "src_system": "POS"
+    }
+  ]
+}
