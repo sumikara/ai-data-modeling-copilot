@@ -1,0 +1,44 @@
+{
+  "run_id": "run_20260430T211825Z_a4d5e3a0",
+  "timestamp": "2026-04-30T21:18:25.942505+00:00",
+  "mode": "mock",
+  "input_path": "test_inputs/semantic_profiling/transaction_like_profile.json",
+  "retrieved_context_sources": [
+    "knowledge_base/extracted_notes/scd_decision_rules.md",
+    "knowledge_base/extracted_notes/grain_decision_rules.md",
+    "knowledge_base/extracted_notes/dimensional_modeling_principles.md"
+  ],
+  "events": [
+    {
+      "timestamp": "2026-04-30T21:18:26.053811+00:00",
+      "event_name": "retrieval_completed",
+      "payload": {
+        "source_count": 3,
+        "sources": [
+          "knowledge_base/extracted_notes/scd_decision_rules.md",
+          "knowledge_base/extracted_notes/grain_decision_rules.md",
+          "knowledge_base/extracted_notes/dimensional_modeling_principles.md"
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-04-30T21:18:26.201853+00:00",
+      "event_name": "semantic_profiling_completed",
+      "payload": {
+        "has_error": false
+      }
+    },
+    {
+      "timestamp": "2026-04-30T21:18:26.203449+00:00",
+      "event_name": "grading_completed",
+      "payload": {
+        "semantic_output_report_path": "test_outputs/semantic_profiling/ACTUAL_SEMANTIC_OUTPUT.md",
+        "grading_report_path": "test_outputs/evaluation/SEMANTIC_OUTPUT_GRADING_REPORT_mock.md",
+        "overall_score": 100,
+        "passed": true,
+        "critical_failures": [],
+        "errors": {}
+      }
+    }
+  ]
+}
