@@ -1,5 +1,5 @@
 {
-  "case_id": "case_04_customer_scd_conflict",
+  "case_id": "case_08_bridge_many_to_many",
   "entity_type_guess": "uncertain semantic entity",
   "recommended_grain": "uncertain",
   "grain_candidates": [],

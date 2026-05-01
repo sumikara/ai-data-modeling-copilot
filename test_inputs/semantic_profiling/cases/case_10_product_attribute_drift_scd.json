@@ -1,11 +1,11 @@
 {
-  "case_id": "case_04_customer_scd_conflict",
+  "case_id": "case_10_product_attribute_drift_scd",
   "domain": "general",
   "case_type": "semantic_case",
-  "business_scenario": "Synthetic scenario for case_04_customer_scd_conflict",
+  "business_scenario": "Synthetic scenario for case_10_product_attribute_drift_scd",
   "trap_or_ambiguity_note": "intentional trap",
   "table_profile": {
-    "table_name": "case_04_customer_scd_conflict_table",
+    "table_name": "case_10_product_attribute_drift_scd_table",
     "row_count": 120000,
     "columns": {
       "id": {

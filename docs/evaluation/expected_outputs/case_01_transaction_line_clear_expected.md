@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_01_transaction_line_clear
 
 ## Purpose
 What this case tests.
