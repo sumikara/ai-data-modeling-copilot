@@ -1,0 +1,124 @@
+{
+  "table_name": "web_event_log_noisy_profile",
+  "row_count": 250000,
+  "columns": {
+    "event_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.01,
+      "distinct_ratio": 0.82,
+      "uniqueness_ratio": 0.82,
+      "sample_values": [
+        "E-1",
+        "E-2",
+        "E-2"
+      ]
+    },
+    "session_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.03,
+      "distinct_ratio": 0.18,
+      "uniqueness_ratio": 0.16,
+      "sample_values": [
+        "S1",
+        "S1",
+        "S2"
+      ]
+    },
+    "user_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.35,
+      "distinct_ratio": 0.29,
+      "uniqueness_ratio": 0.2,
+      "sample_values": [
+        null,
+        "U1",
+        "U2"
+      ]
+    },
+    "event_timestamp": {
+      "data_type_guess": "timestamp",
+      "null_ratio": 0.015,
+      "distinct_ratio": 0.93,
+      "uniqueness_ratio": 0.91,
+      "sample_values": [
+        "2025-03-01 10:00:00",
+        null
+      ]
+    },
+    "event_type": {
+      "data_type_guess": "text",
+      "null_ratio": 0.01,
+      "distinct_ratio": 8e-05,
+      "uniqueness_ratio": 0.0,
+      "sample_values": [
+        "click",
+        "view",
+        "add_to_cart"
+      ]
+    },
+    "page_url": {
+      "data_type_guess": "text",
+      "null_ratio": 0.04,
+      "distinct_ratio": 0.71,
+      "uniqueness_ratio": 0.52,
+      "sample_values": [
+        "/home",
+        "/product/1"
+      ]
+    },
+    "properties_json": {
+      "data_type_guess": "json_text",
+      "null_ratio": 0.12,
+      "distinct_ratio": 0.64,
+      "uniqueness_ratio": 0.58,
+      "sample_values": [
+        "{...}",
+        "{bad_json}"
+      ]
+    }
+  },
+  "candidate_composite_keys": [
+    {
+      "columns": [
+        "event_id"
+      ],
+      "uniqueness_ratio": 0.82,
+      "null_blocking_ratio": 0.01,
+      "notes": "not reliable as final grain"
+    },
+    {
+      "columns": [
+        "session_id",
+        "event_timestamp",
+        "event_type"
+      ],
+      "uniqueness_ratio": 0.91,
+      "null_blocking_ratio": 0.045,
+      "notes": "weak with null sensitivity"
+    },
+    {
+      "columns": [
+        "user_id",
+        "event_timestamp",
+        "page_url"
+      ],
+      "uniqueness_ratio": 0.89,
+      "null_blocking_ratio": 0.36,
+      "notes": "high null blocking due to user_id"
+    }
+  ],
+  "measure_candidates": [],
+  "relationship_candidates": [
+    {
+      "from_column": "user_id",
+      "to_entity": "dim_user",
+      "confidence": 0.41
+    }
+  ],
+  "domain_pattern_findings": {
+    "entity_signal": "event_like",
+    "identity_reliability": "weak",
+    "properties_json_parse_success": 0.76
+  },
+  "cross_source_conflicts": []
+}

@@ -1,0 +1,140 @@
+{
+  "table_name": "product_inventory_snapshot_profile",
+  "row_count": 120000,
+  "columns": {
+    "product_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.0,
+      "distinct_ratio": 0.015,
+      "uniqueness_ratio": 0.015,
+      "sample_values": [
+        "P-100",
+        "P-100",
+        "P-101"
+      ]
+    },
+    "warehouse_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.001,
+      "distinct_ratio": 0.02,
+      "uniqueness_ratio": 0.02,
+      "sample_values": [
+        "W-1",
+        "W-2",
+        "W-1"
+      ]
+    },
+    "snapshot_date": {
+      "data_type_guess": "date",
+      "null_ratio": 0.0,
+      "distinct_ratio": 0.0025,
+      "uniqueness_ratio": 0.0,
+      "sample_values": [
+        "2025-01-01",
+        "2025-01-02"
+      ]
+    },
+    "product_name": {
+      "data_type_guess": "text",
+      "null_ratio": 0.002,
+      "distinct_ratio": 0.014,
+      "uniqueness_ratio": 0.01,
+      "sample_values": [
+        "Widget A",
+        "Widget A"
+      ]
+    },
+    "category": {
+      "data_type_guess": "text",
+      "null_ratio": 0.001,
+      "distinct_ratio": 0.0005,
+      "uniqueness_ratio": 0.0,
+      "sample_values": [
+        "Accessories",
+        "Accessories"
+      ]
+    },
+    "brand": {
+      "data_type_guess": "text",
+      "null_ratio": 0.001,
+      "distinct_ratio": 0.001,
+      "uniqueness_ratio": 0.0,
+      "sample_values": [
+        "BrandX",
+        "BrandY"
+      ]
+    },
+    "stock_on_hand": {
+      "data_type_guess": "integer",
+      "null_ratio": 0.004,
+      "distinct_ratio": 0.02,
+      "uniqueness_ratio": 0.001,
+      "sample_values": [
+        100,
+        98,
+        120
+      ]
+    },
+    "reorder_level": {
+      "data_type_guess": "integer",
+      "null_ratio": 0.01,
+      "distinct_ratio": 0.005,
+      "uniqueness_ratio": 0.0,
+      "sample_values": [
+        30,
+        30,
+        40
+      ]
+    },
+    "inventory_value": {
+      "data_type_guess": "numeric",
+      "null_ratio": 0.006,
+      "distinct_ratio": 0.05,
+      "uniqueness_ratio": 0.003,
+      "sample_values": [
+        1500.0,
+        1470.0,
+        2400.0
+      ]
+    }
+  },
+  "candidate_composite_keys": [
+    {
+      "columns": [
+        "product_id",
+        "warehouse_id",
+        "snapshot_date"
+      ],
+      "uniqueness_ratio": 0.999,
+      "null_blocking_ratio": 0.001,
+      "notes": "periodic snapshot grain"
+    }
+  ],
+  "measure_candidates": [
+    "stock_on_hand",
+    "reorder_level",
+    "inventory_value"
+  ],
+  "relationship_candidates": [
+    {
+      "from_column": "product_id",
+      "to_entity": "dim_product",
+      "confidence": 0.93
+    },
+    {
+      "from_column": "warehouse_id",
+      "to_entity": "dim_warehouse",
+      "confidence": 0.92
+    },
+    {
+      "from_column": "snapshot_date",
+      "to_entity": "dim_date",
+      "confidence": 0.98
+    }
+  ],
+  "domain_pattern_findings": {
+    "grain_signal": "periodic_snapshot",
+    "notes": "descriptors embedded with snapshot metrics; product descriptors drift across dates"
+  },
+  "cross_source_conflicts": []
+}
