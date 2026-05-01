@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_03_inventory_snapshot_hybrid
 
 ## Purpose
 What this case tests.

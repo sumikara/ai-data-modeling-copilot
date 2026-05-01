@@ -1,0 +1,38 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "low",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [
+    "Is line_number mandatory?",
+    "Should header and line be split?"
+  ],
+  "business_process_guess": "e-commerce ordering",
+  "entity_type_guess": "hybrid header-line mixed table",
+  "grain_candidates": [
+    "order_id",
+    "order_id+line_number"
+  ],
+  "recommended_grain": "uncertain",
+  "dimension_candidates": [
+    "customer",
+    "product",
+    "date"
+  ],
+  "fact_candidates": [
+    "order_line_candidate"
+  ],
+  "measure_candidates": [
+    "line_total",
+    "total_order_amount"
+  ],
+  "candidate_natural_keys": [
+    "order_id + line_number"
+  ],
+  "data_quality_risks": [
+    "line_number nulls",
+    "order-level totals repeated across lines"
+  ],
+  "modeling_notes": [
+    "possible split into order_header and order_line"
+  ]
+}

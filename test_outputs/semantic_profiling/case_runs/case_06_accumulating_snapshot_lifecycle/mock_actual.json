@@ -1,0 +1,36 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "medium",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [],
+  "business_process_guess": "order fulfillment lifecycle",
+  "entity_type_guess": "accumulating snapshot fact",
+  "grain_candidates": [
+    "order_id",
+    "order_id+status"
+  ],
+  "recommended_grain": "one row per order lifecycle process instance (order_id)",
+  "dimension_candidates": [
+    "customer",
+    "warehouse",
+    "carrier",
+    "date"
+  ],
+  "fact_candidates": [
+    "order_lifecycle_accumulating_snapshot"
+  ],
+  "measure_candidates": [
+    "days_to_ship",
+    "days_to_deliver"
+  ],
+  "candidate_natural_keys": [
+    "order_id"
+  ],
+  "data_quality_risks": [
+    "milestone date ordering anomalies",
+    "future milestone nulls are expected"
+  ],
+  "modeling_notes": [
+    "do not split milestone dates into separate transaction facts"
+  ]
+}

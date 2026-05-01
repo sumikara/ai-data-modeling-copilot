@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_02_order_header_line_mixed
 
 ## Purpose
 What this case tests.

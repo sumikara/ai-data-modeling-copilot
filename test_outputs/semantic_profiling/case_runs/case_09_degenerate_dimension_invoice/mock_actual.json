@@ -1,0 +1,35 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "medium",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [],
+  "business_process_guess": "invoice line sales",
+  "entity_type_guess": "transaction line fact with degenerate dimension",
+  "grain_candidates": [
+    "invoice_number",
+    "invoice_number+line_number"
+  ],
+  "recommended_grain": "invoice_number + line_number",
+  "dimension_candidates": [
+    "customer",
+    "product",
+    "date"
+  ],
+  "fact_candidates": [
+    "invoice_line_fact"
+  ],
+  "measure_candidates": [
+    "quantity",
+    "unit_price",
+    "line_amount"
+  ],
+  "candidate_natural_keys": [
+    "invoice_number + line_number"
+  ],
+  "data_quality_risks": [
+    "invoice-level descriptions absent for separate dimension"
+  ],
+  "modeling_notes": [
+    "retain invoice_number as degenerate dimension in fact"
+  ]
+}

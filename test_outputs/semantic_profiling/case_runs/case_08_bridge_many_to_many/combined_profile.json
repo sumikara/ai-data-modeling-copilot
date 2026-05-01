@@ -1,0 +1,110 @@
+{
+  "table_profile": {
+    "table_name": "case_08_bridge_many_to_many_table",
+    "row_count": 120000,
+    "columns": {
+      "patient_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.2,
+        "uniqueness_ratio": 0.2,
+        "sample_values": [
+          "P1"
+        ]
+      },
+      "diagnosis_code": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.08,
+        "uniqueness_ratio": 0.08,
+        "sample_values": [
+          "I10"
+        ]
+      },
+      "encounter_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0,
+        "distinct_ratio": 0.02,
+        "uniqueness_ratio": 0.02,
+        "sample_values": [
+          "2026-03-20"
+        ]
+      },
+      "source_system": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.005,
+        "uniqueness_ratio": 0.005,
+        "sample_values": [
+          "ehr"
+        ]
+      }
+    },
+    "candidate_composite_keys": [
+      {
+        "columns": [
+          "patient_id",
+          "diagnosis_code",
+          "encounter_dt"
+        ],
+        "uniqueness_ratio": 0.997,
+        "null_blocking_ratio": 0,
+        "notes": "bridge occurrence"
+      }
+    ],
+    "measure_candidates": []
+  },
+  "relationship_candidates": [
+    {
+      "source_column": "patient_id",
+      "target_entity": "patient",
+      "overlap_ratio": 0.99,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "diagnosis_code",
+      "target_entity": "diagnosis",
+      "overlap_ratio": 0.98,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "medium",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "encounter_dt",
+      "target_entity": "date",
+      "overlap_ratio": 1.0,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    }
+  ],
+  "domain_pattern_findings": {
+    "business_process_hints": [
+      "bridge associative"
+    ],
+    "fact_like_signals": [
+      "event/process evidence"
+    ],
+    "dimension_like_signals": [
+      "descriptive attributes present"
+    ],
+    "snapshot_like_signals": [],
+    "bridge_like_signals": [
+      "many-to-many association"
+    ],
+    "scd_like_signals": [],
+    "ambiguity_signals": [
+      "associative records may be misclassified as dimension or standard fact."
+    ]
+  },
+  "sample_rows": [
+    {
+      "row": "sample1"
+    },
+    {
+      "row": "sample2"
+    }
+  ]
+}

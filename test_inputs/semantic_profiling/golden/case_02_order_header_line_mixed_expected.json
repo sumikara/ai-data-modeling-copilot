@@ -1,0 +1,42 @@
+{
+  "case_id": "case_02_order_header_line_mixed",
+  "case_type": "semantic_case",
+  "domain": "general",
+  "ambiguity_level": "medium",
+  "expected": {
+    "business_process_keywords": [
+      "process"
+    ],
+    "entity_type_allowed": [
+      "fact",
+      "dimension",
+      "hybrid",
+      "bridge",
+      "snapshot",
+      "factless"
+    ],
+    "recommended_grain_must_include": [],
+    "recommended_grain_must_not_be": [],
+    "dimension_candidates_must_include": [],
+    "fact_candidates_must_include": [],
+    "measure_candidates_must_include": [],
+    "data_quality_risk_keywords": [
+      "null",
+      "uniqueness"
+    ],
+    "unresolved_questions_required": true,
+    "scd_notes_required": false,
+    "bridge_candidate_required": false,
+    "factless_fact_allowed": false,
+    "degenerate_dimension_required": false,
+    "confidence_allowed": [
+      "low",
+      "medium"
+    ],
+    "requires_human_decision": true
+  },
+  "critical_failures": [
+    "requires_human_decision_false",
+    "sql_generated"
+  ]
+}

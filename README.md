@@ -65,3 +65,26 @@ All semantic outputs must preserve `requires_human_decision=true`. Outputs are d
 
 ## 13. Roadmap
 See [`docs/evaluation/evaluation-roadmap.md`](docs/evaluation/evaluation-roadmap.md) and provider setup at [`docs/model-providers.md`](docs/model-providers.md).
+
+
+## Evaluation Benchmark
+
+This repository includes an **AI-assisted semantic modeling benchmark** focused on decision support, evidence-based reasoning, and human-approved modeling decisions.
+
+- Multi-case semantic modeling benchmark
+- Golden expected outputs
+- Semantic diff comparator
+- Failure taxonomy
+- Benchmark runner
+- Human-in-the-loop decision gate
+- Evidence package
+
+Key assets:
+- `test_inputs/semantic_profiling/cases/`
+- `test_inputs/semantic_profiling/golden/`
+- `docs/evaluation/test-case-design.md`
+- `docs/evaluation/benchmark-methodology.md`
+- `docs/evaluation/failure-analysis-template.md`
+- `docs/evaluation/model-comparison-report.md`
+
+- Mock mode is deterministic and case-aware; provider modes call real models only when API keys are configured.

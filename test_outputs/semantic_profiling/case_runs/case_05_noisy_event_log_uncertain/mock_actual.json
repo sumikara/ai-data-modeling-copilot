@@ -1,0 +1,34 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "low",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [
+    "How is event_id generated?",
+    "What is dedup rule?"
+  ],
+  "business_process_guess": "product telemetry events",
+  "entity_type_guess": "event-like log with weak identity",
+  "grain_candidates": [
+    "event_id",
+    "session_id+event_timestamp+event_type"
+  ],
+  "recommended_grain": "uncertain",
+  "dimension_candidates": [
+    "user",
+    "session",
+    "date"
+  ],
+  "fact_candidates": [
+    "event_log_candidate"
+  ],
+  "measure_candidates": [],
+  "candidate_natural_keys": [],
+  "data_quality_risks": [
+    "event_id low uniqueness",
+    "user_id high null ratio",
+    "json parse failures"
+  ],
+  "modeling_notes": [
+    "dedup policy required before final grain"
+  ]
+}

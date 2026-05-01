@@ -1,0 +1,35 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "low",
+  "cross_source_conflicts": [
+    "product_category conflict",
+    "product_brand conflict",
+    "product_material conflict"
+  ],
+  "unresolved_questions": [
+    "effective dating policy?"
+  ],
+  "business_process_guess": "product catalog conformance",
+  "entity_type_guess": "product dimension-like with SCD candidates",
+  "grain_candidates": [
+    "product_id",
+    "product_id+source_system"
+  ],
+  "recommended_grain": "product_id candidate with source caveat",
+  "dimension_candidates": [
+    "product",
+    "source_system",
+    "date"
+  ],
+  "fact_candidates": [],
+  "measure_candidates": [],
+  "candidate_natural_keys": [
+    "product_id + source_system"
+  ],
+  "data_quality_risks": [
+    "attribute drift across source/time"
+  ],
+  "modeling_notes": [
+    "SCD attributes are candidates; do not finalize Type 1 or Type 2 without policy"
+  ]
+}

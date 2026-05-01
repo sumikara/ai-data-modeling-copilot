@@ -1,0 +1,33 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "medium",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [],
+  "business_process_guess": "attendance tracking",
+  "entity_type_guess": "factless fact event occurrence",
+  "grain_candidates": [
+    "attendance_id",
+    "student_id+course_id+attendance_dt"
+  ],
+  "recommended_grain": "one row per attendance occurrence",
+  "dimension_candidates": [
+    "student",
+    "course",
+    "date",
+    "location",
+    "status"
+  ],
+  "fact_candidates": [
+    "attendance_factless_fact"
+  ],
+  "measure_candidates": [],
+  "candidate_natural_keys": [
+    "attendance_id"
+  ],
+  "data_quality_risks": [
+    "status semantics may vary by source"
+  ],
+  "modeling_notes": [
+    "factless/event occurrence despite no additive measures"
+  ]
+}

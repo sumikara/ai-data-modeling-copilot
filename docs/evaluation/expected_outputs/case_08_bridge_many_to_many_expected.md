@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_08_bridge_many_to_many
 
 ## Purpose
 What this case tests.

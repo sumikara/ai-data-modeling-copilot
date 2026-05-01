@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_07_factless_fact_attendance
 
 ## Purpose
 What this case tests.

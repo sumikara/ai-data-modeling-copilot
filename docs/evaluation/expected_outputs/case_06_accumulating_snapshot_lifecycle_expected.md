@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_06_accumulating_snapshot_lifecycle
 
 ## Purpose
 What this case tests.
