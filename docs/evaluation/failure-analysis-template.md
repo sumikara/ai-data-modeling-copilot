@@ -1,10 +1,12 @@
 # Failure Analysis Template
-- case id
-- model
-- expected behavior
-- actual behavior
-- score
-- failure categories
-- root cause hypothesis
-- fix target: prompt / KB / grader / fixture / retrieval
-- re-run result
+
+## Case ID
+## Model provider
+## Expected behavior
+## Actual behavior
+## Score
+## Failure categories
+## Root cause hypothesis
+## Proposed fix
+## Fix location (prompt, KB, grader, fixture, profile schema)
+## Re-run result
