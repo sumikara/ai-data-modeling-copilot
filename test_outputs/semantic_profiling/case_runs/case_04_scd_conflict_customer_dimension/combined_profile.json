@@ -1,0 +1,103 @@
+{
+  "table_profile": {
+    "table_name": "customer_profile_conformed_profile",
+    "row_count": 35000,
+    "columns": {
+      "customer_id": {
+        "data_type_guess": "text",
+        "null_ratio": 0.002,
+        "distinct_ratio": 0.97,
+        "uniqueness_ratio": 0.97,
+        "sample_values": [
+          "C-100",
+          "C-100",
+          "C-101"
+        ]
+      },
+      "source_system": {
+        "data_type_guess": "text",
+        "null_ratio": 0.0,
+        "distinct_ratio": 0.0001,
+        "uniqueness_ratio": 0.0,
+        "sample_values": [
+          "online",
+          "offline"
+        ]
+      },
+      "email": {
+        "data_type_guess": "text",
+        "null_ratio": 0.12,
+        "distinct_ratio": 0.88,
+        "uniqueness_ratio": 0.86,
+        "sample_values": [
+          "a@x.com",
+          null,
+          "a@x.com"
+        ]
+      },
+      "customer_segment": {
+        "data_type_guess": "text",
+        "null_ratio": 0.01,
+        "distinct_ratio": 0.0003,
+        "uniqueness_ratio": 0.0,
+        "sample_values": [
+          "gold",
+          "silver"
+        ]
+      },
+      "loyalty_tier": {
+        "data_type_guess": "text",
+        "null_ratio": 0.02,
+        "distinct_ratio": 0.0002,
+        "uniqueness_ratio": 0.0,
+        "sample_values": [
+          "tier_1",
+          "tier_2"
+        ]
+      },
+      "city": {
+        "data_type_guess": "text",
+        "null_ratio": 0.03,
+        "distinct_ratio": 0.02,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "Boston",
+          "Miami"
+        ]
+      },
+      "state": {
+        "data_type_guess": "text",
+        "null_ratio": 0.03,
+        "distinct_ratio": 0.001,
+        "uniqueness_ratio": 0.0,
+        "sample_values": [
+          "MA",
+          "FL"
+        ]
+      },
+      "marketing_opt_in": {
+        "data_type_guess": "boolean",
+        "null_ratio": 0.05,
+        "distinct_ratio": 6e-05,
+        "uniqueness_ratio": 0.0,
+        "sample_values": [
+          true,
+          false,
+          null
+        ]
+      }
+    }
+  },
+  "relationship_candidates": [
+    {
+      "from_column": "customer_id",
+      "to_entity": "dim_customer",
+      "confidence": 0.78
+    }
+  ],
+  "domain_pattern_findings": {
+    "entity_signal": "dimension_like",
+    "scd_signal": "attribute_conflicts_across_sources"
+  },
+  "sample_rows": []
+}

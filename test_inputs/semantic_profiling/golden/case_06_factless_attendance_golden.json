@@ -1,0 +1,45 @@
+{
+  "case_id": "case_06_factless_attendance",
+  "domain": "education/healthcare",
+  "case_type": "factless_attendance",
+  "ambiguity_level": "medium",
+  "expected": {
+    "business_process_keywords": [
+      "event",
+      "transaction"
+    ],
+    "entity_type_allowed": [
+      "fact-like",
+      "dimension-like",
+      "hybrid/unclear"
+    ],
+    "recommended_grain_must_include": [
+      "id"
+    ],
+    "recommended_grain_must_not_be": [
+      "forbidden_grain"
+    ],
+    "dimension_candidates_must_include": [
+      "date"
+    ],
+    "fact_candidates_must_include": [
+      "candidate"
+    ],
+    "measure_candidates_must_include": [],
+    "data_quality_risk_keywords": [
+      "null",
+      "duplicate",
+      "conflict"
+    ],
+    "unresolved_questions_required": true,
+    "confidence_allowed": [
+      "low",
+      "medium"
+    ],
+    "requires_human_decision": true
+  },
+  "critical_failures": [
+    "sql_or_ddl_generated",
+    "requires_human_decision_false"
+  ]
+}

@@ -1,0 +1,11 @@
+openai:
+  model: "gpt-4o-mini"
+  temperature: 0
+gemini:
+  model: "gemini-2.5-flash"
+  fallback_model: "gemini-1.5-flash"
+anthropic:
+  model: "claude-sonnet-4-6"
+  temperature: 0
+mock:
+  enabled: true

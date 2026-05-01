@@ -1,8 +1,3 @@
-# ACTUAL_SEMANTIC_OUTPUT
-
-## Section 1: JSON Output
-
-```json
 {
   "business_process_guess": "unclear",
   "entity_type_guess": "fact-like transactional",
@@ -18,7 +13,7 @@
     "date"
   ],
   "fact_candidates": [
-    "case_10_encounter_fact_profile"
+    "case_08_accumulating_snapshot_profile"
   ],
   "measure_candidates": [
     "quantity",
@@ -45,21 +40,3 @@
   "confidence_level": "medium",
   "requires_human_decision": true
 }
-```
-
-## Section 2: Reasoning Sections
-
-### grain reasoning
-- See `modeling_notes` entries prefixed with `grain_notes`.
-
-### key reasoning
-- See `modeling_notes` entries prefixed with `key_notes`.
-
-### dimension vs fact reasoning
-- See `modeling_notes` entries prefixed with `dimension_notes`.
-
-### relationship reasoning
-- See `modeling_notes` entries prefixed with `relationship_notes`.
-
-### data quality impact
-- See `modeling_notes` entries prefixed with `quality_notes` and `scd_notes`.

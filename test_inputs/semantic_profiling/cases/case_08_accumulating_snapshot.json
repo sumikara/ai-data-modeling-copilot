@@ -1,0 +1,67 @@
+{
+  "case_id": "case_08_accumulating_snapshot",
+  "domain": "logistics",
+  "table_name": "case_08_accumulating_snapshot_profile",
+  "row_count": 18000,
+  "columns": {
+    "id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.01,
+      "distinct_ratio": 0.8,
+      "uniqueness_ratio": 0.8,
+      "sample_values": [
+        "A",
+        "B"
+      ]
+    },
+    "event_dt": {
+      "data_type_guess": "timestamp",
+      "null_ratio": 0.02,
+      "distinct_ratio": 0.9,
+      "uniqueness_ratio": 0.85,
+      "sample_values": [
+        "2025-01-01"
+      ]
+    }
+  },
+  "candidate_composite_keys": [
+    {
+      "columns": [
+        "id"
+      ],
+      "uniqueness_ratio": 0.8,
+      "null_blocking_ratio": 0.01,
+      "notes": "single key weak"
+    },
+    {
+      "columns": [
+        "id",
+        "event_dt"
+      ],
+      "uniqueness_ratio": 0.98,
+      "null_blocking_ratio": 0.03,
+      "notes": "composite candidate"
+    }
+  ],
+  "measure_candidates": [
+    "amount"
+  ],
+  "relationship_candidates": [
+    {
+      "from_column": "id",
+      "to_entity": "dim_entity",
+      "confidence": 0.7
+    }
+  ],
+  "domain_pattern_findings": {
+    "case_type": "accumulating_snapshot"
+  },
+  "cross_source_conflicts": [],
+  "sample_rows": [
+    {
+      "id": "A",
+      "event_dt": "2025-01-01"
+    }
+  ],
+  "trap_or_ambiguity_note": "human review required"
+}
