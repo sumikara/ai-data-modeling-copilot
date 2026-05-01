@@ -1,42 +1,28 @@
 {
-  "business_process_guess": "unclear",
-  "entity_type_guess": "fact-like transactional",
-  "grain_candidates": [
-    "one row per transaction_id",
-    "one row per transaction_id + product_id + customer_id + transaction_dt"
-  ],
-  "recommended_grain": "one row per transaction_id + product_id + customer_id + transaction_dt",
+  "case_id": "case_01_transaction_line_clear",
+  "entity_type_guess": "uncertain semantic entity",
+  "recommended_grain": "uncertain",
+  "grain_candidates": [],
   "dimension_candidates": [
-    "customer",
-    "product",
-    "store",
     "date"
   ],
-  "fact_candidates": [
-    "sales_transaction_lines_profile"
-  ],
+  "fact_candidates": [],
   "measure_candidates": [
     "quantity",
     "unit_price",
     "total_sales"
   ],
-  "candidate_natural_keys": [
-    "transaction_id + product_id + customer_id + transaction_dt"
-  ],
+  "candidate_natural_keys": [],
   "data_quality_risks": [
-    "review null ratios for key columns",
-    "review parse-success gaps for numeric/date fields"
+    "null",
+    "uniqueness"
   ],
-  "cross_source_conflicts": [],
   "modeling_notes": [
-    "grain_notes: mock output; replace with model-generated scored grain evidence.",
-    "key_notes: mock output; evaluate uniqueness/null sensitivity/stability before acceptance.",
-    "dimension_notes: mock output inferred from relationship-style columns.",
-    "relationship_notes: 4 candidate relationship(s) provided.",
-    "quality_notes: confirm parse/null/duplication risks from profile metrics.",
-    "scd_notes: if cross-source conflicts exist, mark attributes as SCD candidates for human review.",
-    "unresolved_questions: requires human decision before model finalization."
+    "human decision required"
   ],
-  "confidence_level": "medium",
-  "requires_human_decision": true
+  "confidence_level": "low",
+  "requires_human_decision": true,
+  "unresolved_questions": [
+    "Confirm business grain policy"
+  ]
 }

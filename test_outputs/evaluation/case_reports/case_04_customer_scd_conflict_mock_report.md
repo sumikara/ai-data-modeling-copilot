@@ -1,22 +1,58 @@
 # case_04_customer_scd_conflict (mock)
 
-## Grade
+## Comparator
 ```json
 {
+  "case_id": "case_04_customer_scd_conflict",
   "overall_score": 100,
   "passed": true,
+  "decision_area_scores": {
+    "grain": 30,
+    "fact_dimension": 20,
+    "keys": 15,
+    "data_quality": 10,
+    "confidence": 10,
+    "governance": 15
+  },
+  "critical_failures": [],
+  "warnings": [],
+  "recommendations": []
+}
+```
+
+## Failure taxonomy
+```json
+{
+  "case_id": "case_04_customer_scd_conflict",
+  "failure_categories": [
+    "weak_knowledge_grounding"
+  ],
+  "root_cause_hypotheses": [
+    "Needs deeper evidence grounding."
+  ],
+  "recommended_fix_area": [
+    "retrieval"
+  ]
+}
+```
+
+## Grader
+```json
+{
+  "overall_score": 70,
+  "passed": false,
   "checks": [
     {
       "name": "required_json_keys",
-      "score": 100,
-      "passed": true,
-      "notes": "All required keys present."
+      "score": 0,
+      "passed": false,
+      "notes": "Missing keys: ['business_process_guess', 'cross_source_conflicts']"
     },
     {
       "name": "valid_confidence_level",
       "score": 100,
       "passed": true,
-      "notes": "confidence_level='medium'"
+      "notes": "confidence_level='low'"
     },
     {
       "name": "requires_human_decision_true",
@@ -26,21 +62,21 @@
     },
     {
       "name": "grain_candidates_non_empty",
-      "score": 100,
-      "passed": true,
-      "notes": "grain_candidates count=2"
+      "score": 0,
+      "passed": false,
+      "notes": "grain_candidates count=0"
     },
     {
       "name": "recommended_grain_present_or_uncertain",
       "score": 100,
       "passed": true,
-      "notes": "recommended_grain='one row per transaction_id + product_id + customer_id + transaction_dt'"
+      "notes": "recommended_grain='uncertain'"
     },
     {
       "name": "grain_reasoning_evidence",
-      "score": 100,
-      "passed": true,
-      "notes": "Modeling notes include grain reasoning evidence."
+      "score": 0,
+      "passed": false,
+      "notes": "No grain reasoning evidence found in modeling_notes."
     },
     {
       "name": "data_quality_risks_non_empty",
@@ -67,32 +103,12 @@
       "notes": "No SQL/DDL patterns found."
     }
   ],
-  "critical_failures": [],
-  "recommendations": []
-}
-```
-
-## Golden
-```json
-{
-  "case_id": "case_04_customer_scd_conflict",
-  "overall_score": 93,
-  "passed": true,
-  "decision_area_scores": {
-    "grain": 100,
-    "fact_dimension": 60,
-    "keys": 100,
-    "data_quality": 100,
-    "confidence": 100,
-    "governance": 100
-  },
-  "critical_failures": [],
-  "warnings": [
-    "missing_expected_fact_candidates"
+  "critical_failures": [
+    "Missing required JSON keys."
   ],
-  "recommendations": []
+  "recommendations": [
+    "Provide at least one evidence-based grain candidate.",
+    "Strengthen evidence traceability in modeling_notes for higher grading confidence."
+  ]
 }
 ```
-
-## Failure categories
-- 

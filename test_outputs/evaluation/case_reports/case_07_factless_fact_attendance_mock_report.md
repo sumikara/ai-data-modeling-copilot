@@ -1,28 +1,21 @@
-# case_01_transaction_line_clear (mock)
+# case_07_factless_fact_attendance (mock)
 
 ## Comparator
 ```json
 {
-  "case_id": "case_01_transaction_line_clear",
-  "overall_score": 68,
-  "passed": false,
+  "case_id": "case_07_factless_fact_attendance",
+  "overall_score": 100,
+  "passed": true,
   "decision_area_scores": {
     "grain": 30,
-    "fact_dimension": 0,
+    "fact_dimension": 20,
     "keys": 15,
-    "data_quality": 8,
-    "confidence": 0,
+    "data_quality": 10,
+    "confidence": 10,
     "governance": 15
   },
-  "critical_failures": [
-    "confidence_not_allowed"
-  ],
-  "warnings": [
-    "fact_dimension_mismatch",
-    "missing_dimension:customer",
-    "missing_dimension:product",
-    "missing_risk_keyword:near-perfect"
-  ],
+  "critical_failures": [],
+  "warnings": [],
   "recommendations": []
 }
 ```
@@ -30,18 +23,15 @@
 ## Failure taxonomy
 ```json
 {
-  "case_id": "case_01_transaction_line_clear",
+  "case_id": "case_07_factless_fact_attendance",
   "failure_categories": [
-    "missing_data_quality_risks",
-    "overconfident_reasoning",
-    "wrong_fact_dimension_classification"
+    "weak_knowledge_grounding"
   ],
   "root_cause_hypotheses": [
-    "Confidence calibration failure."
+    "Needs deeper evidence grounding."
   ],
   "recommended_fix_area": [
-    "grader",
-    "prompt"
+    "retrieval"
   ]
 }
 ```

@@ -1,11 +1,11 @@
 {
-  "case_id": "case_04_customer_scd_conflict",
+  "case_id": "case_06_accumulating_snapshot_lifecycle",
   "domain": "general",
   "case_type": "semantic_case",
-  "business_scenario": "Synthetic scenario for case_04_customer_scd_conflict",
+  "business_scenario": "Synthetic scenario for case_06_accumulating_snapshot_lifecycle",
   "trap_or_ambiguity_note": "intentional trap",
   "table_profile": {
-    "table_name": "case_04_customer_scd_conflict_table",
+    "table_name": "case_06_accumulating_snapshot_lifecycle_table",
     "row_count": 120000,
     "columns": {
       "id": {
@@ -57,13 +57,7 @@
       "trap present"
     ]
   },
-  "cross_source_conflicts": [
-    {
-      "attribute": "segment",
-      "source_a": "A",
-      "source_b": "B"
-    }
-  ],
+  "cross_source_conflicts": [],
   "sample_rows": [
     {
       "example": 1
