@@ -1,0 +1,161 @@
+{
+  "case_id": "case_09_degenerate_dimension_invoice",
+  "domain": "sales_invoicing",
+  "case_type": "degenerate_dimension_fact",
+  "business_scenario": "Realistic synthetic profiling fixture for degenerate dimension fact.",
+  "trap_or_ambiguity_note": "invoice_number may be forced into a separate dimension despite minimal descriptors.",
+  "table_profile": {
+    "table_name": "case_09_degenerate_dimension_invoice_table",
+    "row_count": 120000,
+    "columns": {
+      "invoice_number": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.4,
+        "uniqueness_ratio": 0.4,
+        "sample_values": [
+          "INV-1"
+        ]
+      },
+      "line_number": {
+        "data_type_guess": "int",
+        "null_ratio": 0,
+        "distinct_ratio": 0.05,
+        "uniqueness_ratio": 0.05,
+        "sample_values": [
+          1
+        ]
+      },
+      "product_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.12,
+        "uniqueness_ratio": 0.12,
+        "sample_values": [
+          "SKU1"
+        ]
+      },
+      "customer_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.3,
+        "uniqueness_ratio": 0.3,
+        "sample_values": [
+          "C1"
+        ]
+      },
+      "invoice_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "2026-04-09"
+        ]
+      },
+      "quantity": {
+        "data_type_guess": "int",
+        "null_ratio": 0,
+        "distinct_ratio": 0.03,
+        "uniqueness_ratio": 0.03,
+        "sample_values": [
+          2
+        ]
+      },
+      "unit_price": {
+        "data_type_guess": "decimal",
+        "null_ratio": 0,
+        "distinct_ratio": 0.3,
+        "uniqueness_ratio": 0.3,
+        "sample_values": [
+          15.0
+        ]
+      },
+      "line_amount": {
+        "data_type_guess": "decimal",
+        "null_ratio": 0,
+        "distinct_ratio": 0.35,
+        "uniqueness_ratio": 0.35,
+        "sample_values": [
+          30.0
+        ]
+      }
+    },
+    "candidate_composite_keys": [
+      {
+        "columns": [
+          "invoice_number"
+        ],
+        "uniqueness_ratio": 0.4,
+        "null_blocking_ratio": 0,
+        "notes": "wrong as sole grain"
+      },
+      {
+        "columns": [
+          "invoice_number",
+          "line_number"
+        ],
+        "uniqueness_ratio": 0.999,
+        "null_blocking_ratio": 0,
+        "notes": "line grain"
+      }
+    ],
+    "measure_candidates": [
+      "quantity",
+      "unit_price",
+      "line_amount"
+    ]
+  },
+  "relationship_candidates": [
+    {
+      "source_column": "product_id",
+      "target_entity": "product",
+      "overlap_ratio": 0.99,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "customer_id",
+      "target_entity": "customer",
+      "overlap_ratio": 0.98,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "medium",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "invoice_dt",
+      "target_entity": "date",
+      "overlap_ratio": 1.0,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    }
+  ],
+  "domain_pattern_findings": {
+    "business_process_hints": [
+      "degenerate dimension fact"
+    ],
+    "fact_like_signals": [
+      "event/process evidence"
+    ],
+    "dimension_like_signals": [
+      "descriptive attributes present"
+    ],
+    "snapshot_like_signals": [],
+    "bridge_like_signals": [],
+    "scd_like_signals": [],
+    "ambiguity_signals": [
+      "invoice_number may be forced into a separate dimension despite minimal descriptors."
+    ]
+  },
+  "cross_source_conflicts": [],
+  "sample_rows": [
+    {
+      "row": "sample1"
+    },
+    {
+      "row": "sample2"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "requires_human_decision": true,
+  "confidence_level": "medium",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [],
+  "business_process_guess": "diagnosis assignment",
+  "entity_type_guess": "bridge/associative entity",
+  "grain_candidates": [
+    "patient_id+diagnosis_code+encounter_dt"
+  ],
+  "recommended_grain": "one row per many-to-many relationship occurrence",
+  "dimension_candidates": [
+    "patient",
+    "diagnosis",
+    "date"
+  ],
+  "fact_candidates": [
+    "bridge_patient_diagnosis"
+  ],
+  "measure_candidates": [],
+  "candidate_natural_keys": [
+    "patient_id + diagnosis_code + encounter_dt"
+  ],
+  "data_quality_risks": [
+    "duplicate relationship rows"
+  ],
+  "modeling_notes": [
+    "bridge candidate required for many-to-many"
+  ]
+}

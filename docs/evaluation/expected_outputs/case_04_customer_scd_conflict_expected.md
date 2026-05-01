@@ -1,16 +1,25 @@
 # Expected Semantic Behavior: case_04_customer_scd_conflict
 
 ## Purpose
-Case for customer_scd_conflict.
+What this case tests.
 
-## Expected JSON behavior
-`requires_human_decision` must remain true and confidence should stay low/medium.
+## Trap
+Intentional trap for wrong grain/classification.
 
-## Expected reasoning
-Include grain reasoning, key reasoning, fact vs dimension reasoning, relationship reasoning, data-quality impact, SCD notes when relevant, unresolved questions.
+## Expected behavior
+- business process
+- entity type
+- grain
+- fact/dimension interpretation
+- key interpretation
+- data quality risks
+- SCD notes if applicable
+- unresolved questions if applicable
+- confidence expectation
+- human decision gate
 
-## What would count as a failure
-- Overconfident unsupported grain
-- SQL/DDL generation
-- Missing risk discussion
-- `requires_human_decision=false`
+## What would count as failure
+Wrong grain, overconfidence, missing requires_human_decision=true, SQL/DDL generation.
+
+## Why this matters for real data modeling
+Supports human-approved modeling decisions with evidence.

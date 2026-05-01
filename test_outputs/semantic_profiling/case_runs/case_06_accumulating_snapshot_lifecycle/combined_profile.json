@@ -1,0 +1,166 @@
+{
+  "table_profile": {
+    "table_name": "case_06_accumulating_snapshot_lifecycle_table",
+    "row_count": 120000,
+    "columns": {
+      "order_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.999,
+        "uniqueness_ratio": 0.999,
+        "sample_values": [
+          "O1"
+        ]
+      },
+      "order_created_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "2026-04-01"
+        ]
+      },
+      "packed_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0.1,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "2026-04-02"
+        ]
+      },
+      "shipped_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0.2,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "2026-04-03"
+        ]
+      },
+      "delivered_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0.3,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "2026-04-05"
+        ]
+      },
+      "cancelled_dt": {
+        "data_type_guess": "date",
+        "null_ratio": 0.92,
+        "distinct_ratio": 0.005,
+        "uniqueness_ratio": 0.005,
+        "sample_values": [
+          "2026-04-04"
+        ]
+      },
+      "current_status": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "delivered"
+        ]
+      },
+      "carrier_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0.02,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "CAR1"
+        ]
+      },
+      "warehouse_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "WH1"
+        ]
+      },
+      "days_to_ship": {
+        "data_type_guess": "int",
+        "null_ratio": 0.1,
+        "distinct_ratio": 0.05,
+        "uniqueness_ratio": 0.05,
+        "sample_values": [
+          2
+        ]
+      },
+      "days_to_deliver": {
+        "data_type_guess": "int",
+        "null_ratio": 0.3,
+        "distinct_ratio": 0.06,
+        "uniqueness_ratio": 0.06,
+        "sample_values": [
+          4
+        ]
+      }
+    },
+    "candidate_composite_keys": [
+      {
+        "columns": [
+          "order_id"
+        ],
+        "uniqueness_ratio": 0.999,
+        "null_blocking_ratio": 0,
+        "notes": "accumulating row per order"
+      }
+    ],
+    "measure_candidates": [
+      "days_to_ship",
+      "days_to_deliver"
+    ]
+  },
+  "relationship_candidates": [
+    {
+      "source_column": "carrier_id",
+      "target_entity": "carrier",
+      "overlap_ratio": 0.98,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "medium",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "warehouse_id",
+      "target_entity": "warehouse",
+      "overlap_ratio": 0.99,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    }
+  ],
+  "domain_pattern_findings": {
+    "business_process_hints": [
+      "accumulating snapshot"
+    ],
+    "fact_like_signals": [
+      "event/process evidence"
+    ],
+    "dimension_like_signals": [
+      "descriptive attributes present"
+    ],
+    "snapshot_like_signals": [
+      "periodic/accumulating timeline evidence"
+    ],
+    "bridge_like_signals": [],
+    "scd_like_signals": [],
+    "ambiguity_signals": [
+      "multiple milestone dates can be mistaken for separate event facts."
+    ]
+  },
+  "sample_rows": [
+    {
+      "row": "sample1"
+    },
+    {
+      "row": "sample2"
+    }
+  ]
+}

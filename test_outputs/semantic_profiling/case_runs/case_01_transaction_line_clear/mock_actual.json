@@ -1,11 +1,15 @@
 {
-  "business_process_guess": "unclear",
-  "entity_type_guess": "fact-like transactional",
+  "requires_human_decision": true,
+  "confidence_level": "medium",
+  "cross_source_conflicts": [],
+  "unresolved_questions": [],
+  "business_process_guess": "retail sales transaction",
+  "entity_type_guess": "transaction line fact",
   "grain_candidates": [
-    "one row per transaction_id",
-    "one row per transaction_id + product_id + customer_id + transaction_dt"
+    "transaction_id",
+    "transaction_id+product_id+customer_id+transaction_dt"
   ],
-  "recommended_grain": "one row per transaction_id + product_id + customer_id + transaction_dt",
+  "recommended_grain": "transaction_id + product_id + customer_id + transaction_dt",
   "dimension_candidates": [
     "customer",
     "product",
@@ -13,7 +17,7 @@
     "date"
   ],
   "fact_candidates": [
-    "sales_transaction_lines_profile"
+    "sales_transaction_line"
   ],
   "measure_candidates": [
     "quantity",
@@ -24,19 +28,10 @@
     "transaction_id + product_id + customer_id + transaction_dt"
   ],
   "data_quality_risks": [
-    "review null ratios for key columns",
-    "review parse-success gaps for numeric/date fields"
+    "transaction_id alone is non-unique",
+    "low null ratios still affect key stability"
   ],
-  "cross_source_conflicts": [],
   "modeling_notes": [
-    "grain_notes: mock output; replace with model-generated scored grain evidence.",
-    "key_notes: mock output; evaluate uniqueness/null sensitivity/stability before acceptance.",
-    "dimension_notes: mock output inferred from relationship-style columns.",
-    "relationship_notes: 4 candidate relationship(s) provided.",
-    "quality_notes: confirm parse/null/duplication risks from profile metrics.",
-    "scd_notes: if cross-source conflicts exist, mark attributes as SCD candidates for human review.",
-    "unresolved_questions: requires human decision before model finalization."
-  ],
-  "confidence_level": "medium",
-  "requires_human_decision": true
+    "line-level additive measures"
+  ]
 }

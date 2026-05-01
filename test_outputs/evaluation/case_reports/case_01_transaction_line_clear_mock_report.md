@@ -1,9 +1,50 @@
 # case_01_transaction_line_clear (mock)
 
-## Grade
+Source mode: **mock**
+
+## Comparator
 ```json
 {
-  "overall_score": 100,
+  "case_id": "case_01_transaction_line_clear",
+  "overall_score": 96,
+  "passed": true,
+  "decision_area_scores": {
+    "grain": 30,
+    "fact_dimension": 20,
+    "keys": 15,
+    "data_quality": 6,
+    "confidence": 10,
+    "governance": 15
+  },
+  "critical_failures": [],
+  "warnings": [
+    "missing_risk_keyword:near-perfect",
+    "missing_risk_keyword:uniqueness"
+  ],
+  "recommendations": []
+}
+```
+
+## Failure taxonomy
+```json
+{
+  "case_id": "case_01_transaction_line_clear",
+  "failure_categories": [
+    "missing_data_quality_risks"
+  ],
+  "root_cause_hypotheses": [
+    "Needs deeper evidence grounding."
+  ],
+  "recommended_fix_area": [
+    "retrieval"
+  ]
+}
+```
+
+## Grader
+```json
+{
+  "overall_score": 90,
   "passed": true,
   "checks": [
     {
@@ -34,13 +75,13 @@
       "name": "recommended_grain_present_or_uncertain",
       "score": 100,
       "passed": true,
-      "notes": "recommended_grain='one row per transaction_id + product_id + customer_id + transaction_dt'"
+      "notes": "recommended_grain='transaction_id + product_id + customer_id + transaction_dt'"
     },
     {
       "name": "grain_reasoning_evidence",
-      "score": 100,
-      "passed": true,
-      "notes": "Modeling notes include grain reasoning evidence."
+      "score": 0,
+      "passed": false,
+      "notes": "No grain reasoning evidence found in modeling_notes."
     },
     {
       "name": "data_quality_risks_non_empty",
@@ -71,17 +112,3 @@
   "recommendations": []
 }
 ```
-
-## Golden
-```json
-{
-  "case_id": "case_01_transaction_line_clear",
-  "passed": false,
-  "critical_failures": [
-    "missing_golden"
-  ]
-}
-```
-
-## Failure categories
-- 

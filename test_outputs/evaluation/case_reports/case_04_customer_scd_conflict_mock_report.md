@@ -1,9 +1,49 @@
 # case_04_customer_scd_conflict (mock)
 
-## Grade
+Source mode: **mock**
+
+## Comparator
 ```json
 {
-  "overall_score": 100,
+  "case_id": "case_04_customer_scd_conflict",
+  "overall_score": 98,
+  "passed": true,
+  "decision_area_scores": {
+    "grain": 30,
+    "fact_dimension": 20,
+    "keys": 15,
+    "data_quality": 8,
+    "confidence": 10,
+    "governance": 15
+  },
+  "critical_failures": [],
+  "warnings": [
+    "missing_risk_keyword:uniqueness"
+  ],
+  "recommendations": []
+}
+```
+
+## Failure taxonomy
+```json
+{
+  "case_id": "case_04_customer_scd_conflict",
+  "failure_categories": [
+    "missing_data_quality_risks"
+  ],
+  "root_cause_hypotheses": [
+    "Needs deeper evidence grounding."
+  ],
+  "recommended_fix_area": [
+    "retrieval"
+  ]
+}
+```
+
+## Grader
+```json
+{
+  "overall_score": 90,
   "passed": true,
   "checks": [
     {
@@ -16,7 +56,7 @@
       "name": "valid_confidence_level",
       "score": 100,
       "passed": true,
-      "notes": "confidence_level='medium'"
+      "notes": "confidence_level='low'"
     },
     {
       "name": "requires_human_decision_true",
@@ -34,13 +74,13 @@
       "name": "recommended_grain_present_or_uncertain",
       "score": 100,
       "passed": true,
-      "notes": "recommended_grain='one row per transaction_id + product_id + customer_id + transaction_dt'"
+      "notes": "recommended_grain='customer identity candidate requires conformance review'"
     },
     {
       "name": "grain_reasoning_evidence",
-      "score": 100,
-      "passed": true,
-      "notes": "Modeling notes include grain reasoning evidence."
+      "score": 0,
+      "passed": false,
+      "notes": "No grain reasoning evidence found in modeling_notes."
     },
     {
       "name": "data_quality_risks_non_empty",
@@ -71,28 +111,3 @@
   "recommendations": []
 }
 ```
-
-## Golden
-```json
-{
-  "case_id": "case_04_customer_scd_conflict",
-  "overall_score": 93,
-  "passed": true,
-  "decision_area_scores": {
-    "grain": 100,
-    "fact_dimension": 60,
-    "keys": 100,
-    "data_quality": 100,
-    "confidence": 100,
-    "governance": 100
-  },
-  "critical_failures": [],
-  "warnings": [
-    "missing_expected_fact_candidates"
-  ],
-  "recommendations": []
-}
-```
-
-## Failure categories
-- 

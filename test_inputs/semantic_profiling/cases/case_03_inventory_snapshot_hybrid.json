@@ -1,0 +1,191 @@
+{
+  "case_id": "case_03_inventory_snapshot_hybrid",
+  "domain": "retail_logistics",
+  "case_type": "inventory_periodic_snapshot",
+  "business_scenario": "Daily inventory snapshots by product and warehouse used for replenishment analytics.",
+  "trap_or_ambiguity_note": "product descriptors resemble a dimension, but snapshot_date plus stock measures indicate periodic snapshot fact.",
+  "table_profile": {
+    "table_name": "case_03_inventory_snapshot_hybrid_table",
+    "row_count": 120000,
+    "columns": {
+      "product_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.04,
+        "uniqueness_ratio": 0.04,
+        "sample_values": [
+          "SKU-11"
+        ]
+      },
+      "warehouse_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "WH-1"
+        ]
+      },
+      "snapshot_date": {
+        "data_type_guess": "date",
+        "null_ratio": 0,
+        "distinct_ratio": 0.01,
+        "uniqueness_ratio": 0.01,
+        "sample_values": [
+          "2026-04-10"
+        ]
+      },
+      "stock_on_hand": {
+        "data_type_guess": "int",
+        "null_ratio": 0,
+        "distinct_ratio": 0.4,
+        "uniqueness_ratio": 0.4,
+        "sample_values": [
+          300
+        ]
+      },
+      "reorder_level": {
+        "data_type_guess": "int",
+        "null_ratio": 0,
+        "distinct_ratio": 0.1,
+        "uniqueness_ratio": 0.1,
+        "sample_values": [
+          120
+        ]
+      },
+      "inventory_value": {
+        "data_type_guess": "decimal",
+        "null_ratio": 0,
+        "distinct_ratio": 0.55,
+        "uniqueness_ratio": 0.55,
+        "sample_values": [
+          4500.0
+        ]
+      },
+      "product_name": {
+        "data_type_guess": "string",
+        "null_ratio": 0.0,
+        "distinct_ratio": 0.04,
+        "uniqueness_ratio": 0.04,
+        "sample_values": [
+          "Trail Shoe"
+        ]
+      },
+      "category": {
+        "data_type_guess": "string",
+        "null_ratio": 0.0,
+        "distinct_ratio": 0.02,
+        "uniqueness_ratio": 0.02,
+        "sample_values": [
+          "Footwear"
+        ]
+      },
+      "brand": {
+        "data_type_guess": "string",
+        "null_ratio": 0.01,
+        "distinct_ratio": 0.03,
+        "uniqueness_ratio": 0.03,
+        "sample_values": [
+          "NorthPeak"
+        ]
+      }
+    },
+    "candidate_composite_keys": [
+      {
+        "columns": [
+          "product_id"
+        ],
+        "uniqueness_ratio": 0.04,
+        "null_blocking_ratio": 0.0,
+        "notes": "Wrong for snapshot grain"
+      },
+      {
+        "columns": [
+          "product_id",
+          "warehouse_id",
+          "snapshot_date"
+        ],
+        "uniqueness_ratio": 0.999,
+        "null_blocking_ratio": 0.0,
+        "notes": "Expected periodic snapshot grain"
+      }
+    ],
+    "measure_candidates": [
+      "stock_on_hand",
+      "reorder_level",
+      "inventory_value"
+    ]
+  },
+  "relationship_candidates": [
+    {
+      "source_column": "product_id",
+      "target_entity": "product",
+      "overlap_ratio": 0.99,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "warehouse_id",
+      "target_entity": "warehouse",
+      "overlap_ratio": 0.99,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "snapshot_date",
+      "target_entity": "date",
+      "overlap_ratio": 1.0,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "high",
+      "notes": "inferred via profiling overlaps"
+    }
+  ],
+  "domain_pattern_findings": {
+    "business_process_hints": [
+      "inventory control"
+    ],
+    "fact_like_signals": [
+      "stock_on_hand measured over time"
+    ],
+    "dimension_like_signals": [
+      "embedded product descriptors"
+    ],
+    "snapshot_like_signals": [
+      "snapshot_date periodicity"
+    ],
+    "bridge_like_signals": [],
+    "scd_like_signals": [
+      "descriptor drift across snapshots"
+    ],
+    "ambiguity_signals": [
+      "dimension-like attributes embedded in fact"
+    ]
+  },
+  "cross_source_conflicts": [],
+  "sample_rows": [
+    {
+      "product_id": "SKU-11",
+      "warehouse_id": "WH-1",
+      "snapshot_date": "2026-04-10",
+      "stock_on_hand": 300,
+      "reorder_level": 120,
+      "inventory_value": 4500.0,
+      "product_name": "Trail Shoe",
+      "category": "Footwear",
+      "brand": "NorthPeak"
+    },
+    {
+      "product_id": "SKU-11",
+      "warehouse_id": "WH-1",
+      "snapshot_date": "2026-04-11",
+      "stock_on_hand": 280,
+      "reorder_level": 120,
+      "inventory_value": 4200.0,
+      "product_name": "Trail Shoe",
+      "category": "Athletic Footwear",
+      "brand": "NorthPeak"
+    }
+  ]
+}

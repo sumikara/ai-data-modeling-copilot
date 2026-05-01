@@ -1,0 +1,141 @@
+{
+  "case_id": "case_05_noisy_event_log_uncertain",
+  "domain": "saas_product_analytics",
+  "case_type": "noisy_event_log",
+  "business_scenario": "Realistic synthetic profiling fixture for noisy event log.",
+  "trap_or_ambiguity_note": "event_id appears key-like but uniqueness is too low and event payload quality is inconsistent.",
+  "table_profile": {
+    "table_name": "case_05_noisy_event_log_uncertain_table",
+    "row_count": 120000,
+    "columns": {
+      "event_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0,
+        "distinct_ratio": 0.82,
+        "uniqueness_ratio": 0.82,
+        "sample_values": [
+          "E1"
+        ]
+      },
+      "session_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0.12,
+        "distinct_ratio": 0.4,
+        "uniqueness_ratio": 0.4,
+        "sample_values": [
+          "S1"
+        ]
+      },
+      "user_id": {
+        "data_type_guess": "string",
+        "null_ratio": 0.35,
+        "distinct_ratio": 0.42,
+        "uniqueness_ratio": 0.42,
+        "sample_values": [
+          "U1"
+        ]
+      },
+      "event_timestamp": {
+        "data_type_guess": "timestamp",
+        "null_ratio": 0.015,
+        "distinct_ratio": 0.95,
+        "uniqueness_ratio": 0.95,
+        "sample_values": [
+          "2026-04-01T01:01:01Z"
+        ]
+      },
+      "event_type": {
+        "data_type_guess": "string",
+        "null_ratio": 0.01,
+        "distinct_ratio": 0.03,
+        "uniqueness_ratio": 0.03,
+        "sample_values": [
+          "click"
+        ]
+      },
+      "page_url": {
+        "data_type_guess": "string",
+        "null_ratio": 0.04,
+        "distinct_ratio": 0.2,
+        "uniqueness_ratio": 0.2,
+        "sample_values": [
+          "/pricing"
+        ]
+      },
+      "properties_json": {
+        "data_type_guess": "json",
+        "null_ratio": 0.08,
+        "distinct_ratio": 0.7,
+        "uniqueness_ratio": 0.7,
+        "sample_values": [
+          "{\"ab\":\"A\"}"
+        ]
+      }
+    },
+    "candidate_composite_keys": [
+      {
+        "columns": [
+          "event_id"
+        ],
+        "uniqueness_ratio": 0.82,
+        "null_blocking_ratio": 0,
+        "notes": "weak uniqueness"
+      },
+      {
+        "columns": [
+          "session_id",
+          "event_timestamp",
+          "event_type"
+        ],
+        "uniqueness_ratio": 0.9,
+        "null_blocking_ratio": 0.12,
+        "notes": "still weak"
+      }
+    ],
+    "measure_candidates": []
+  },
+  "relationship_candidates": [
+    {
+      "source_column": "user_id",
+      "target_entity": "user",
+      "overlap_ratio": 0.6,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "medium",
+      "notes": "inferred via profiling overlaps"
+    },
+    {
+      "source_column": "session_id",
+      "target_entity": "session",
+      "overlap_ratio": 0.7,
+      "inferred_cardinality": "many_to_one",
+      "confidence": "medium",
+      "notes": "inferred via profiling overlaps"
+    }
+  ],
+  "domain_pattern_findings": {
+    "business_process_hints": [
+      "noisy event log"
+    ],
+    "fact_like_signals": [
+      "event/process evidence"
+    ],
+    "dimension_like_signals": [
+      "descriptive attributes present"
+    ],
+    "snapshot_like_signals": [],
+    "bridge_like_signals": [],
+    "scd_like_signals": [],
+    "ambiguity_signals": [
+      "event_id appears key-like but uniqueness is too low and event payload quality is inconsistent."
+    ]
+  },
+  "cross_source_conflicts": [],
+  "sample_rows": [
+    {
+      "row": "sample1"
+    },
+    {
+      "row": "sample2"
+    }
+  ]
+}

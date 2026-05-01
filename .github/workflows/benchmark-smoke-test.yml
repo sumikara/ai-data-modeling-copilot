@@ -1,13 +1,15 @@
 name: benchmark-smoke-test
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 jobs:
-  mock-benchmark:
+  smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: {python-version: '3.11'}
-      - run: pip install -r requirements.txt || true
-      - run: python scripts/validate_json_files.py
-      - run: python scripts/check_required_artifacts.py
+        with:
+          python-version: '3.10'
+      - run: pip install -r requirements.txt
+      - run: python scripts/validate_benchmark_assets.py
       - run: python scripts/run_benchmark.py --mode mock

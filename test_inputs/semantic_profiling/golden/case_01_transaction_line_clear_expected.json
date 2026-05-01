@@ -1,0 +1,60 @@
+{
+  "case_id": "case_01_transaction_line_clear",
+  "case_type": "clear_transaction_line_fact",
+  "domain": "retail_ecommerce",
+  "ambiguity_level": "low",
+  "expected": {
+    "business_process_keywords": [
+      "sales",
+      "transaction",
+      "retail"
+    ],
+    "entity_type_allowed": [
+      "fact-like transactional line dataset",
+      "transaction line fact",
+      "sales transaction line"
+    ],
+    "recommended_grain_must_include": [
+      "transaction_id",
+      "product_id",
+      "customer_id",
+      "transaction_dt"
+    ],
+    "recommended_grain_must_not_be": [
+      "transaction_id"
+    ],
+    "dimension_candidates_must_include": [
+      "customer",
+      "product",
+      "date"
+    ],
+    "fact_candidates_must_include": [
+      "sales_transaction_line"
+    ],
+    "measure_candidates_must_include": [
+      "quantity",
+      "unit_price",
+      "total_sales"
+    ],
+    "data_quality_risk_keywords": [
+      "null",
+      "uniqueness",
+      "near-perfect"
+    ],
+    "unresolved_questions_required": false,
+    "scd_notes_required": false,
+    "bridge_candidate_required": false,
+    "factless_fact_allowed": false,
+    "degenerate_dimension_required": false,
+    "confidence_allowed": [
+      "medium"
+    ],
+    "requires_human_decision": true
+  },
+  "critical_failures": [
+    "recommended_grain_is_transaction_id_only",
+    "confidence_high_despite_null_or_near_unique_key",
+    "requires_human_decision_false",
+    "sql_generated"
+  ]
+}

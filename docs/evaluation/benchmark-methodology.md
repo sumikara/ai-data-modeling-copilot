@@ -1,10 +1,22 @@
 # Benchmark Methodology
 
-This benchmark measures evidence-grounded semantic reasoning quality, not SQL generation.
+Purpose: evaluate AI-assisted semantic modeling benchmark quality as decision support, not autonomous truth.
 
-- Exact string matching is insufficient because multiple grains/fact-dim options can be valid.
-- Golden files use semantic constraints (allowed confidence, required keywords, forbidden outcomes).
-- Grain/fact/dimension scoring uses overlap and constraint checks.
-- Confidence calibration penalizes overconfidence under ambiguity/conflicts.
-- `requires_human_decision=true` is enforced as a governance gate.
-- Failure analysis feeds improvements to prompts, knowledge base rules, grader checks, and fixtures.
+Scoring rubric: grain 30, fact_dimension 20, keys 15, data_quality 10, confidence 10, governance 15.
+
+Critical failures include wrong forbidden grain, missing human gate, SQL/DDL output, overconfidence under ambiguity/conflict, and forced modeling claims without evidence.
+
+Confidence calibration: low/medium allowed for ambiguous cases unless evidence is strong.
+
+Human decision gate: `requires_human_decision=true` is mandatory.
+
+Model comparison plan: run mock, llm, and gemini modes using identical fixtures and golden constraints.
+
+
+## Execution modes
+- Mock mode is deterministic and case-aware for the 10 benchmark fixtures.
+- `llm` and `gemini` modes call real providers only when API keys are configured; otherwise cases are marked SKIPPED.
+
+## Comparator behavior
+- Golden comparison uses semantic constraints (required/forbidden terms, confidence policy, governance checks), not exact string matching only.
+- Traps are intentionally included to test overconfidence and wrong-grain reasoning.
