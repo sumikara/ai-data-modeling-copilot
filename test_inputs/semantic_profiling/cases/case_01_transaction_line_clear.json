@@ -1,0 +1,156 @@
+{
+  "table_name": "sales_transaction_lines_profile",
+  "row_count": 50000,
+  "columns": {
+    "transaction_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.002,
+      "distinct_ratio": 0.42,
+      "uniqueness_ratio": 0.42,
+      "sample_values": [
+        "TXN-1001",
+        "TXN-1001",
+        "TXN-1002"
+      ]
+    },
+    "product_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.001,
+      "distinct_ratio": 0.08,
+      "uniqueness_ratio": 0.08,
+      "sample_values": [
+        "P-10",
+        "P-44",
+        "P-10"
+      ]
+    },
+    "customer_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.004,
+      "distinct_ratio": 0.18,
+      "uniqueness_ratio": 0.18,
+      "sample_values": [
+        "C-11",
+        "C-32",
+        "C-11"
+      ]
+    },
+    "store_id": {
+      "data_type_guess": "text",
+      "null_ratio": 0.006,
+      "distinct_ratio": 0.02,
+      "uniqueness_ratio": 0.02,
+      "sample_values": [
+        "S-1",
+        "S-1",
+        "S-2"
+      ]
+    },
+    "transaction_dt": {
+      "data_type_guess": "timestamp",
+      "null_ratio": 0.001,
+      "distinct_ratio": 0.92,
+      "uniqueness_ratio": 0.92,
+      "sample_values": [
+        "2025-01-03 10:01:00",
+        "2025-01-03 10:01:00"
+      ]
+    },
+    "quantity": {
+      "data_type_guess": "integer",
+      "null_ratio": 0.003,
+      "distinct_ratio": 0.0002,
+      "uniqueness_ratio": 0.0,
+      "sample_values": [
+        1,
+        2,
+        1
+      ]
+    },
+    "unit_price": {
+      "data_type_guess": "numeric",
+      "null_ratio": 0.002,
+      "distinct_ratio": 0.25,
+      "uniqueness_ratio": 0.01,
+      "sample_values": [
+        9.99,
+        12.5,
+        9.99
+      ]
+    },
+    "total_sales": {
+      "data_type_guess": "numeric",
+      "null_ratio": 0.003,
+      "distinct_ratio": 0.31,
+      "uniqueness_ratio": 0.02,
+      "sample_values": [
+        9.99,
+        25.0,
+        9.99
+      ]
+    }
+  },
+  "candidate_composite_keys": [
+    {
+      "columns": [
+        "transaction_id"
+      ],
+      "uniqueness_ratio": 0.42,
+      "null_blocking_ratio": 0.002,
+      "notes": "header-level id repeats across lines"
+    },
+    {
+      "columns": [
+        "transaction_id",
+        "product_id",
+        "transaction_dt"
+      ],
+      "uniqueness_ratio": 0.998,
+      "null_blocking_ratio": 0.004,
+      "notes": "strong line-grain candidate"
+    },
+    {
+      "columns": [
+        "transaction_id",
+        "product_id",
+        "customer_id",
+        "transaction_dt"
+      ],
+      "uniqueness_ratio": 0.9995,
+      "null_blocking_ratio": 0.007,
+      "notes": "best candidate with small null blocking"
+    }
+  ],
+  "measure_candidates": [
+    "quantity",
+    "unit_price",
+    "total_sales"
+  ],
+  "relationship_candidates": [
+    {
+      "from_column": "customer_id",
+      "to_entity": "dim_customer",
+      "confidence": 0.93
+    },
+    {
+      "from_column": "product_id",
+      "to_entity": "dim_product",
+      "confidence": 0.95
+    },
+    {
+      "from_column": "store_id",
+      "to_entity": "dim_store",
+      "confidence": 0.9
+    },
+    {
+      "from_column": "transaction_dt",
+      "to_entity": "dim_date",
+      "confidence": 0.97
+    }
+  ],
+  "domain_pattern_findings": {
+    "grain_signal": "transaction_line",
+    "notes": "repeated transaction_id with additive measures"
+  },
+  "cross_source_conflicts": []
+}
