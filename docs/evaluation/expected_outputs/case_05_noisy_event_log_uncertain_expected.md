@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_05_noisy_event_log_uncertain
 
 ## Purpose
 What this case tests.

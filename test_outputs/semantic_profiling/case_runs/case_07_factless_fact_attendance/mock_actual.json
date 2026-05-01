@@ -1,5 +1,5 @@
 {
-  "case_id": "case_04_customer_scd_conflict",
+  "case_id": "case_07_factless_fact_attendance",
   "entity_type_guess": "uncertain semantic entity",
   "recommended_grain": "uncertain",
   "grain_candidates": [],

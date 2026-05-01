@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_09_degenerate_dimension_invoice
 
 ## Purpose
 What this case tests.

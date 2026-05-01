@@ -1,4 +1,4 @@
-# Expected Semantic Behavior: case_04_customer_scd_conflict
+# Expected Semantic Behavior: case_10_product_attribute_drift_scd
 
 ## Purpose
 What this case tests.
