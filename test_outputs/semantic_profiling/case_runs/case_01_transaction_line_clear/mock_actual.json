@@ -1,8 +1,3 @@
-# ACTUAL_SEMANTIC_OUTPUT
-
-## Section 1: JSON Output
-
-```json
 {
   "business_process_guess": "unclear",
   "entity_type_guess": "fact-like transactional",
@@ -18,7 +13,7 @@
     "date"
   ],
   "fact_candidates": [
-    "case_10_encounter_fact_profile"
+    "sales_transaction_lines_profile"
   ],
   "measure_candidates": [
     "quantity",
@@ -37,7 +32,7 @@
     "grain_notes: mock output; replace with model-generated scored grain evidence.",
     "key_notes: mock output; evaluate uniqueness/null sensitivity/stability before acceptance.",
     "dimension_notes: mock output inferred from relationship-style columns.",
-    "relationship_notes: 1 candidate relationship(s) provided.",
+    "relationship_notes: 4 candidate relationship(s) provided.",
     "quality_notes: confirm parse/null/duplication risks from profile metrics.",
     "scd_notes: if cross-source conflicts exist, mark attributes as SCD candidates for human review.",
     "unresolved_questions: requires human decision before model finalization."
@@ -45,21 +40,3 @@
   "confidence_level": "medium",
   "requires_human_decision": true
 }
-```
-
-## Section 2: Reasoning Sections
-
-### grain reasoning
-- See `modeling_notes` entries prefixed with `grain_notes`.
-
-### key reasoning
-- See `modeling_notes` entries prefixed with `key_notes`.
-
-### dimension vs fact reasoning
-- See `modeling_notes` entries prefixed with `dimension_notes`.
-
-### relationship reasoning
-- See `modeling_notes` entries prefixed with `relationship_notes`.
-
-### data quality impact
-- See `modeling_notes` entries prefixed with `quality_notes` and `scd_notes`.

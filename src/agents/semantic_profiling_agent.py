@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, Tuple
 
 from src.retrieval.knowledge_retriever import retrieve_relevant_context
+from src.models.model_router import route as route_model
 
 
 PROMPT_TEMPLATE_PATH = Path(".ai/prompts/semantic-profiling-prompt-template.md")
@@ -326,7 +327,10 @@ def run_semantic_profiling(profile_json_path: str, mode: str = "mock") -> Dict[s
     if mode == "llm":
         RAW_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         try:
-            raw_output = _call_llm(prompt)
+            routed = route_model(prompt, "openai")
+            if not routed.get("ok"):
+                raise RuntimeError(routed.get("error", "openai routing failed"))
+            raw_output = routed.get("text", "")
             RAW_OUTPUT_PATH.write_text(raw_output, encoding="utf-8")
             parsed_json = _extract_json_block(raw_output)
             _write_output_markdown(parsed_json)
@@ -346,7 +350,10 @@ def run_semantic_profiling(profile_json_path: str, mode: str = "mock") -> Dict[s
     if mode == "gemini":
         GEMINI_RAW_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         try:
-            raw_output = _call_gemini(prompt)
+            routed = route_model(prompt, "gemini")
+            if not routed.get("ok"):
+                raise RuntimeError(routed.get("error", "gemini routing failed"))
+            raw_output = routed.get("text", "")
             GEMINI_RAW_OUTPUT_PATH.write_text(raw_output, encoding="utf-8")
             parsed_json = _extract_json_block(raw_output)
             _write_output_markdown(parsed_json)
@@ -368,3 +375,14 @@ def run_semantic_profiling(profile_json_path: str, mode: str = "mock") -> Dict[s
         "raw_output_path": str(RAW_OUTPUT_PATH),
         "requires_human_decision": True,
     }
+    if mode == "anthropic":
+        try:
+            routed = route_model(prompt, "anthropic")
+            if not routed.get("ok"):
+                raise RuntimeError(routed.get("error", "anthropic routing failed"))
+            raw_output = routed.get("text", "")
+            parsed_json = _extract_json_block(raw_output)
+            _write_output_markdown(parsed_json)
+            return parsed_json
+        except Exception as exc:
+            return {"error": str(exc), "requires_human_decision": True}
