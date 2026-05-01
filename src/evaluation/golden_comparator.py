@@ -57,8 +57,9 @@ def compare(actual:Dict[str,Any],golden:Dict[str,Any])->Dict[str,Any]:
     if actual.get('confidence_level') not in exp.get('confidence_allowed',['low','medium','high']): crit.append('confidence_not_allowed'); scores['confidence']=0
     if exp.get('recommended_grain_must_include') and not contains_all_terms(rg, exp.get('recommended_grain_must_include')) and normalize_text(rg)!='uncertain': warn.append('grain_missing_required_columns'); scores['grain']-=10
     if detect_forbidden_grain_only(rg, exp.get('recommended_grain_must_not_be',[]), exp.get('recommended_grain_must_include',[])):
-        forbidden = exp.get('recommended_grain_must_not_be',['forbidden'])[0]
-        crit.append(f"recommended_grain_is_{forbidden}_only"); scores['grain']=0
+        forbidden_list = exp.get('recommended_grain_must_not_be', ["forbidden"])
+        forbidden_term = forbidden_list[0] if forbidden_list else "forbidden"
+        crit.append(f"recommended_grain_is_{forbidden_term}_only"); scores['grain']=0
     for d in exp.get('dimension_candidates_must_include',[]):
         if not list_contains_term(actual.get('dimension_candidates',[]),d): warn.append(f'missing_dimension:{d}'); scores['fact_dimension']-=4
     if exp.get('fact_candidates_must_include') and not all(list_contains_term(actual.get('fact_candidates',[]),x) for x in exp['fact_candidates_must_include']): warn.append('missing_expected_fact_candidate'); scores['fact_dimension']-=6
